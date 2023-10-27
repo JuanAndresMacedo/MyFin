@@ -1,0 +1,209 @@
+﻿@page "/Transacciones/CrearTransaccion"
+@using Logica
+@using Dominio
+@inject CuentaLogica CuentaLogica
+@inject CategoriaLogica CategoriaLogica
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject NavigationManager NavegationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Crear transaccion <i class="bi bi-arrow-down-up"></i> </h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+            <div class="mb-3">
+                <label for="montoTransaccion" class="form-label">Monto</label>
+                <input type="number" class="form-control" id="montoTransaccion" required @bind="_monto">
+            </div>
+
+            <fieldset>
+                <div class="mb-3">
+                    <legend for="tipoRadioButton" class="form-label fs-6">Tipo</legend>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo" id="Costo" value="Costo" checked
+                               @onchange="ActualizarTipoSeleccionado"/>
+                        <label class="form-check-label" for="Costo">
+                            Costo
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipo" id="Ingreso" value="Ingreso"
+                               @onchange="ActualizarTipoSeleccionado"/>
+                        <label class="form-check-label" for="Ingreso">
+                            Ingreso
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <div class="mb-3">
+                    <legend for="monedaRadioButton" class="form-label fs-6">Moneda</legend>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="moneda" id="UYU" value="UYU" checked
+                               @onchange="ActualizarMonedaSeleccionada"/>
+                        <label class="form-check-label" for="UYU">
+                            UYU
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="moneda" id="US$" value="US$"
+                               @onchange="ActualizarMonedaSeleccionada"/>
+                        <label class="form-check-label" for="US$">
+                            US$
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <label class="cuentas" for="misCuentas">Mis cuentas:</label>
+                <select @bind="_idCuentaSeleccionada" class="form-select form-select-lg mb-3" id="misCuentas">
+                    <option value="0">Seleccionar una opción</option>
+                    @foreach (Cuenta cuenta in 
+                        CuentaLogica.ListarCuentasDeUnEspacioPorMoneda(EspacioLogica.EspacioActual, _moneda))
+                    {
+                        <option value="@cuenta.Id">
+                            @cuenta.Nombre
+                        </option>
+                    }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="categorias" for="misCategorias"> Categorias para @_tipo:</label>
+                <select @bind="_idCategoriaSeleccionada" class="form-select form-select-lg mb-3" aria-label="Large select example" id="misCategorias">
+                    <option value="0">Seleccionar una opción</option>
+                    @foreach (Categoria categoria in 
+                        CategoriaLogica.ListarCategoriasActivasDeUnEspacioPorTipo(EspacioLogica.EspacioActual, _tipo))
+                    {
+                        if (categoria.Tipo == _tipo && categoria.Estatus == "Activa")
+                        {
+                            <option value="@categoria.Id">
+                                @categoria.Nombre
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Fecha:</label>
+                    <input type="date" class="form-control" id="fechaInicio" @bind="_fecha">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="Crear">
+                    Crear <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private IList<Categoria> _categorias;
+
+    private string _nombre;
+    private float _monto;
+    private string _moneda;
+    private string _tipo;
+    private string _mensajeDeError;
+    private string _idCuentaSeleccionada;
+    private string _idCategoriaSeleccionada;
+    private Transaccion transaccionAAgregar;
+
+    private DateTime _fecha;
+
+    protected override void OnInitialized()
+    {
+        _tipo = "Costo";
+        _moneda = "UYU";
+        _fecha = DateTime.Today;
+    }
+
+    private void ActualizarMonedaSeleccionada(ChangeEventArgs e)
+    {
+        ReiniciarDatosDeLaPagina();
+        _moneda = e.Value.ToString();
+    }
+
+    private void ActualizarTipoSeleccionado(ChangeEventArgs e)
+    {
+        ReiniciarDatosDeLaPagina();
+        _tipo = e.Value.ToString();
+    }
+
+    private void Cancelar()
+    {
+        NavegationManager.NavigateTo("Transacciones");
+    }
+
+    private void Crear()
+    {
+        try
+        {
+            if (_idCuentaSeleccionada != null && _idCategoriaSeleccionada != null)
+            {
+                transaccionAAgregar = new Transaccion()
+                {
+                    Nombre = _nombre,
+                    Monto = _monto,
+                    Moneda = _moneda,
+                    Tipo = _tipo,
+                    Fecha = _fecha,
+                    Espacio = EspacioLogica.EspacioActual,
+                    Cuenta = CuentaLogica.EncontrarCuenta(int.Parse(_idCuentaSeleccionada)),
+                    Categoria = CategoriaLogica.EncontrarCategoria(int.Parse(_idCategoriaSeleccionada))
+                };
+                TransaccionLogica.ValidarExistenciaDeTipoDeCambioParaFechaDeTransaccion
+                    (transaccionAAgregar, EspacioLogica.EspacioActual, TipoDeCambioLogica);
+                TransaccionLogica.AgregarTransaccion(transaccionAAgregar);
+                ReiniciarDatosDeLaPagina();
+                NavegationManager.NavigateTo("/Transacciones");
+            }
+            else
+            {
+                _mensajeDeError = "La transaccion debe tener una cuenta y una categoría.";
+            }
+        }
+        catch
+            (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+
+        catch
+            (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+    private void ReiniciarDatosDeLaPagina()
+    {
+        _idCuentaSeleccionada = "0";
+        _idCategoriaSeleccionada = "0";
+        _mensajeDeError = "";
+    }
+
+}

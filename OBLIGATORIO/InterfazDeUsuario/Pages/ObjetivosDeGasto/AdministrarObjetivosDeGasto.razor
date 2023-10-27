@@ -1,0 +1,59 @@
+﻿@page "/ObjetivosDeGasto"
+@using Logica
+@using Dominio
+@inject ObjetivoDeGastoLogica ObjetivoDeGastoLogica
+@inject EspacioLogica EspacioLogica
+
+<PageTitle>Objetivo de gasto</PageTitle>
+
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h1 class="text-center">Objetivos de gasto <i class="bi bi-bag-check"></i></h1>
+        <a href="/ObjetivosDeGasto/CrearObjetivoDeGasto" class="btn btn-primary mb-3 w-100">
+            Crear objetivo de gasto <i class="bi bi-plus-circle"></i>
+        </a>
+
+        <ul class="list-group">
+            @foreach (ObjetivoDeGasto objetivoDeGasto in _objetivosDeGasto)
+            {
+                <li class="list-group-item">
+                    <div>
+                        <div> Objetivo: @objetivoDeGasto.Titulo</div>
+                    </div>
+                    <li class="list-group-item">
+                        <div>Datos del objetivo: </div>
+                        <div> - Monto máximo: @objetivoDeGasto.MontoMaximo</div>
+                        <div>
+                            - Categorias:
+                            @for (int i = 0; i < objetivoDeGasto.Categorias.Count; i++)
+                            {
+                                @objetivoDeGasto.Categorias[i].Nombre
+                                @if (i < objetivoDeGasto.Categorias.Count - 1)
+                                {
+                                    @(" - ")
+                                }
+                            }
+                        </div>
+                    </li>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private IList<ObjetivoDeGasto> _objetivosDeGasto;
+
+    protected override void OnInitialized()
+    {
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _objetivosDeGasto = ObjetivoDeGastoLogica.
+            ListarObjetivosDeGastosDeUnEspacio(EspacioLogica.EspacioActual);
+    }
+
+}

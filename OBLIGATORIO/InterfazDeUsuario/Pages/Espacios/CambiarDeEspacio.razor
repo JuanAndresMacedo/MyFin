@@ -1,0 +1,31 @@
+﻿@page "/CambiarDeEspacio"
+@using Logica
+@inject EspacioLogica EspacioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Cambiar de espacio</PageTitle>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <div class="text-center mt-4">
+            <div class="recuadro">
+                <h1 class="confirmar-cambio-espacio">¿Está seguro que quiere cambiar de espacio?</h1>
+                <button class="btn btn-secondary" @onclick="NoCambiar">No cambiar</button>
+                <button class="btn btn-primary" @onclick="Cambiar"> Cambiar <i class="bi bi-arrow-repeat"></i> </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+    private void NoCambiar()
+    {
+        NavigationManager.NavigateTo("/Principal");
+    }
+
+    private void Cambiar()
+    {
+        EspacioLogica.SalirDelEspacio();
+        NavigationManager.NavigateTo("/ElegirEspacio");
+    }
+}

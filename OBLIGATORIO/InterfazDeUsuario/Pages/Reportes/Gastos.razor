@@ -1,0 +1,155 @@
+﻿@page "/Reportes/Gastos"
+
+@using Logica
+@using Dominio
+
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject CategoriaLogica CategoriaLogica
+@inject CuentaLogica CuentaLogica
+
+<PageTitle>Listado de gastos</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<h1>Reportes <i class="bi bi-bar-chart"></i></h1>
+<a href="/Reportes" class="btn btn-primary btn-sm mb-3">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h2>Listado de gastos <i class="bi bi-arrow-down"></i></h2>
+
+        <form>
+
+            <div class="row mb-3">
+
+                <div class="col-md-6">
+                    <label for="categorias">Categoría:</label>
+                    <select @bind="_nombreCategoriaAFiltrar" class="form-select form-select mb-3" id="categorias">
+                        <option value="">Todas las categorías</option>
+                        @foreach (Categoria categoria in CategoriaLogica.ListarCategoriasDeUnEspacio(EspacioLogica.EspacioActual))
+                        {
+                            <option value="@categoria.Nombre"> @categoria.Nombre </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="cuentas">Cuenta:</label>
+                    <select @bind="_idCuentaAFiltrar" class="form-select form-select mb-3" id="cuentas">
+                        <option value="">Todas las cuentas</option>
+                        @foreach (Cuenta cuenta in CuentaLogica.ListarCuentasDeUnEspacio(EspacioLogica.EspacioActual))
+                        {
+                            <option value="@cuenta.Id"> @cuenta.Nombre </option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Fecha de inicio:</label>
+                    <input type="date" class="form-control" id="fechaInicio" @bind="_rangoDeFechas.FechaDesde">
+                </div>
+                <div class="col-md-6">
+                    <label for="fechaFin">Fecha de fin:</label>
+                    <input type="date" class="form-control" id="fechaFin" @bind="_rangoDeFechas.FechaHasta">
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary mt-3 w-100" @onclick="FiltrarListadoDeGastos">Filtrar <i class="bi bi-filter"></i> </button>
+        </form>
+
+        <ul class="list-group mt-3">
+            @if (_reporteGastos == null || _reporteGastos.Count == 0)
+            {
+                <li class="list-group-item">No hay datos.</li>
+            }
+            @foreach (Transaccion datosGastos in _reporteGastos)
+            {
+                <li class="list-group-item">
+                    <div> - Nombre: @datosGastos.Nombre</div>
+                    <div> - Monto: @ReportesLogica.ConvertirAPesosUruguayos(datosGastos, TipoDeCambioLogica)</div>
+                    <div> - Cuenta: @datosGastos.Cuenta.Nombre</div>
+                    <div> - Categoría: @datosGastos.Categoria.Nombre</div>
+                    <div> - Espacio: @datosGastos.Fecha.ToShortDateString()</div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+
+    private string? _nombreCategoriaAFiltrar;
+    private string? _idCuentaAFiltrar;
+    private Cuenta? _cuentaAFiltrar;
+    private Categoria? _categoriaAFiltrar;
+
+    private ReportesLogica.RangoFechas _rangoDeFechas;
+    private List<Transaccion> _reporteGastos;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _reporteGastos = ReportesLogica.ReporteListadoDeGastos(TransaccionLogica, EspacioLogica.EspacioActual,
+            _categoriaAFiltrar, _cuentaAFiltrar, _rangoDeFechas);
+    }
+
+    private void FiltrarListadoDeGastos()
+    {
+        try
+        {
+            if (_nombreCategoriaAFiltrar != null)
+            {
+                _categoriaAFiltrar = new Categoria()
+                {
+                    Nombre = _nombreCategoriaAFiltrar,
+                    Espacio = EspacioLogica.EspacioActual
+                };
+            }
+
+            if (_idCuentaAFiltrar != null)
+            {
+                _cuentaAFiltrar = new Monetaria()
+                {
+                    Id = int.Parse(_idCuentaAFiltrar)
+                };
+            }
+            
+            _reporteGastos = ReportesLogica.ReporteListadoDeGastos(TransaccionLogica, EspacioLogica.EspacioActual,
+                _categoriaAFiltrar, _cuentaAFiltrar, _rangoDeFechas);
+            
+            ReiniciarDatos();
+
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+    private void ReiniciarDatos()
+    {
+        _idCuentaAFiltrar = null;
+        _nombreCategoriaAFiltrar = null;
+        _categoriaAFiltrar = null;
+        _cuentaAFiltrar = null;
+        _mensajeDeError = "";
+    }
+
+}

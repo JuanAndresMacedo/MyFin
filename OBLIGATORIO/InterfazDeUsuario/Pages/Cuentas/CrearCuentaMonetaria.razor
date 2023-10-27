@@ -1,0 +1,124 @@
+@page "/Cuentas/CrearCuentaMonetaria/"
+@using Dominio
+@using Logica
+@inject CuentaLogica CuentaLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear Cuenta Monetaria</PageTitle>
+
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Crear cuenta monetaria <i class="bi bi-cash-stack"></i> </h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Monto Inicial</label>
+                <input type="number" class="form-control" id="apellido" required @bind="_monto">
+            </div>
+
+            <fieldset>
+                <div class="mb-3">
+                    <legend for="monedaRadioButton" class="form-label fs-6">Moneda</legend>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="moneda" id="UYU" value="UYU" checked
+                               @onchange="ActualizarMonedaSeleccionada"/>
+                        <label class="form-check-label" for="UYU">
+                            UYU
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="moneda" id="US$" value="US$"
+                               @onchange="ActualizarMonedaSeleccionada"/>
+                        <label class="form-check-label" for="US$">
+                            US$
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Fecha de Creación:</label>
+                    <input type="date" class="form-control" id="fechaInicio" @bind="_fechaDeCreacion">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="CrearCuentaMonetariaNueva">
+                    Crear <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private Monetaria? _cuentaMonetariaACrear;
+
+    private string _nombre;
+    private float _monto;
+    private string _moneda;
+    private DateTime _fechaDeCreacion;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _moneda = "UYU";
+        _fechaDeCreacion = DateTime.Today;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void ActualizarMonedaSeleccionada(ChangeEventArgs e)
+    {
+        _moneda = e.Value.ToString();
+    }
+
+    private void CrearCuentaMonetariaNueva()
+    {
+        try
+        {
+            _cuentaMonetariaACrear = new Monetaria()
+            {
+                Nombre = _nombre,
+                Monto = _monto,
+                Moneda = _moneda,
+                FechaDeCreacion = _fechaDeCreacion,
+                Propietario = UsuarioLogica.UsuarioActual,
+                Espacio = EspacioLogica.EspacioActual,
+            };
+            CuentaLogica.AgregarCuenta(_cuentaMonetariaACrear);
+            NavigationManager.NavigateTo("/Cuentas");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

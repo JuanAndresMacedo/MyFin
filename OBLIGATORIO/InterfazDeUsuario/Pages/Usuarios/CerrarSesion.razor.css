@@ -1,0 +1,11 @@
+﻿.confirmar-salida{
+    color: #1b6ec2;
+    margin-bottom: 2%;
+}
+
+.recuadro {
+    border: 2px solid #1b6ec2;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    padding: 20px;
+}

@@ -1,0 +1,62 @@
+﻿@page "/Reportes/PorObjetivosDeGasto"
+@using Logica
+
+@inject ObjetivoDeGastoLogica ObjetivoDeGastoLogica
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject EspacioLogica EspacioLogica
+
+<PageTitle>Reporte por Objetivos de gasto</PageTitle>
+
+<h1>Reportes <i class="bi bi-bar-chart"></i></h1>
+<a href="/Reportes" class="btn btn-primary btn-sm mb-3">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h2>Objetivos de gasto <i class="bi bi-bag-check"></i> </h2>
+
+        <ul class="list-group mt-3">
+            @if (_reportePorObjetivoDeGasto == null || _reportePorObjetivoDeGasto.Count == 0)
+            {
+                <li class="list-group-item">No hay datos para mostrar en este mes.</li>
+            }
+            else
+            {
+                @foreach (ReportesLogica.DatosPorObjetivoDeGasto 
+                    datosPorObjetivoDeGasto in _reportePorObjetivoDeGasto)
+                {
+                    <li class="list-group-item">
+                        <div> - Objetivo de Gasto: @datosPorObjetivoDeGasto.ObjetivoDeGasto.Titulo</div>
+                        <div> - Monto máximo: @datosPorObjetivoDeGasto.MontoDefinido</div>
+                        <div> - Monto Gastado: @datosPorObjetivoDeGasto.MontoGastado</div>
+                        <div>
+                            - Categorias:
+                            @for (int i = 0; i < datosPorObjetivoDeGasto.ObjetivoDeGasto.Categorias.Count; i++)
+                            {
+                                @datosPorObjetivoDeGasto.ObjetivoDeGasto.Categorias[i].Nombre
+                                @if (i < datosPorObjetivoDeGasto.ObjetivoDeGasto.Categorias.Count - 1)
+                                {
+                                    @(" - ")
+                                }
+                            }
+                        </div>
+                        <div> - Cumplido: @(datosPorObjetivoDeGasto.estaObjetivoDeGastoCumplido ? "Si" : "No")</div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private List<ReportesLogica.DatosPorObjetivoDeGasto> _reportePorObjetivoDeGasto;
+    private DateTime _mes;
+
+    protected override void OnInitialized()
+    {
+        _mes = DateTime.Today;
+        _reportePorObjetivoDeGasto = ReportesLogica.ReportePorObjetivoDeGasto
+            (TransaccionLogica, ObjetivoDeGastoLogica, EspacioLogica.EspacioActual, _mes, TipoDeCambioLogica);
+    }
+
+}

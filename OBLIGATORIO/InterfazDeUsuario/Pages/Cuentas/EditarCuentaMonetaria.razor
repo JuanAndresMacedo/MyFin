@@ -1,0 +1,152 @@
+@page "/Cuentas/{IdCuenta}/EditarCuentaMonetaria"
+@using Dominio
+@using Logica
+@inject CuentaLogica CuentaLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject NavigationManager NavigationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar cuenta monetaria <i class="bi bi-cash-stack"></i></h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre">Nombre </label>
+                <input class="form-control" type="text" id="nombre" @bind="_nombre">
+            </div>
+
+            <div class="mb-3">
+                <label for="montoInicial">Monto Inicial</label>
+                <input type="number" class="form-control" id="montoInicial" @bind="_montoInicial"/>
+            </div>
+
+            @if (CuentaLogica.ValidarSiCuentaTieneUnaTransacciónAsociada(
+                _cuentaActual, EspacioLogica.EspacioActual, TransaccionLogica))
+            {
+                <fieldset disabled>
+                    <div class="mb-3">
+                        <legend for="monedaRadioButton" class="form-label fs-6">Moneda</legend>
+                        <div class="form-check ">
+                            <input class="form-check-input" type="radio" name="moneda" id="UYU" value="UYU"
+                                   checked="@(_moneda == "UYU")">
+                            <label class="form-check-label" for="UYU">
+                                UYU
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="moneda" id="US$" value="US$"
+                                   checked="@(_moneda == "US$")">
+                            <label class="form-check-label" for="US$">
+                                US$
+                            </label>
+                        </div>
+                    </div>
+                    <div id="informacion" class="form-text mb-3">
+                        La cuenta tiene una transaccion asociada,
+                        no se puede editar la moneda.
+                    </div>
+                </fieldset>
+            }
+            else
+            {
+                <fieldset>
+                    <div class="mb-3">
+                        <legend for="monedaRadioButton" class="form-label fs-6">Moneda</legend>
+                        <div class="form-check ">
+                            <input class="form-check-input" type="radio" name="moneda" id="UYU" value="UYU"
+                                   @onchange="ActualizarMonedaSeleccionada" checked="@(_moneda == "UYU")">
+                            <label class="form-check-label" for="UYU">
+                                UYU
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="moneda" id="US$" value="US$"
+                                   @onchange="ActualizarMonedaSeleccionada" checked="@(_moneda == "US$")">
+                            <label class="form-check-label" for="US$">
+                                US$
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary" @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mb-3">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public string IdCuenta { get; set; }
+
+    private Monetaria? _cuentaActual;
+    private Cuenta _cuentaEditada;
+
+    private string _nombre;
+    private float? _montoInicial;
+    private string _moneda;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _cuentaActual = (Monetaria)CuentaLogica.EncontrarCuenta(int.Parse(IdCuenta));
+
+        _nombre = _cuentaActual.Nombre;
+        _moneda = _cuentaActual.Moneda;
+        _montoInicial = _cuentaActual.Monto;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void GuardarCambios()
+    {
+        _cuentaEditada = new Monetaria()
+        {
+            Id = int.Parse(IdCuenta),
+            Nombre = _nombre,
+            Propietario = UsuarioLogica.UsuarioActual,
+            Espacio = EspacioLogica.EspacioActual,
+            FechaDeCreacion = _cuentaActual.FechaDeCreacion,
+            Monto = _montoInicial,
+            Moneda = _moneda,
+        };
+
+        CuentaLogica.ActualizarCuenta(_cuentaEditada);
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void ActualizarMonedaSeleccionada(ChangeEventArgs e)
+    {
+        _moneda = e.Value.ToString();
+    }
+
+}

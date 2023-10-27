@@ -1,0 +1,91 @@
+﻿@page "/TiposDeCambio/{FechaTipoDeCambio}/EditarTipoDeCambio"
+@using Dominio
+@using Logica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject EspacioLogica EspacioLogica
+@inject NavigationManager NavigationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar tipo de cambio <i class="bi bi-cash"></i></h1>
+
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaDeCambio">Fecha:</label>
+                    <input type="date" class="form-control" id="fechaDeCambio" @bind="_fecha" disabled>
+                </div>
+                <div id="requisito-fecha" class="form-text">La fecha no se puede editar.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="valorDelDolar" class="form-label">Valor del dolar</label>
+                <input type="number" class="form-control" id="valorDelDolar" required @bind="_valorDelDolar">
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar"> Cancelar </button>
+                <button type="button" class="btn btn-primary" @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string FechaTipoDeCambio { get; set; }
+
+    private DateTime _fecha;
+    private TipoDeCambio _tipoDeCambioActual;
+    private TipoDeCambio _tipoDeCambioEditado;
+    private float _valorDelDolar;
+
+    private string _mensajeDeError;
+
+
+    protected override void OnInitialized()
+    {
+        string[] yyyy_MM_dd = FechaTipoDeCambio.Split("-");
+        _fecha = new DateTime(
+            int.Parse(yyyy_MM_dd[0]), int.Parse(yyyy_MM_dd[1]), int.Parse(yyyy_MM_dd[2]));
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/TiposDeCambio");
+    }
+
+    private void GuardarCambios()
+    {
+        try
+        {
+            _tipoDeCambioEditado = new TipoDeCambio()
+            {
+                Fecha = _fecha,
+                Espacio = EspacioLogica.EspacioActual,
+                ValorDelDolar = _valorDelDolar
+            };
+
+            TipoDeCambioLogica.ActualizarTipoDeCambio(_tipoDeCambioEditado);
+            NavigationManager.NavigateTo("/TiposDeCambio");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+}
