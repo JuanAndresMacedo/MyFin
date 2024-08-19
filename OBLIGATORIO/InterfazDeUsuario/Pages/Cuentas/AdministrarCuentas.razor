@@ -1,0 +1,168 @@
+﻿@page "/Cuentas"
+
+@using Dominio
+@using Logica
+@inject MonetariaLogica MonetariaLogica
+@inject TarjetaDeCreditoLogica TarjetaDeCreditoLogica
+@inject UsuarioLogica UsuarioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject EspacioLogica EspacioLogica
+
+
+<PageTitle>Cuentas</PageTitle>
+
+<div class="container text-center">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <h1 class="cuentas-titulo text-center">Cuentas <i class="bi bi-wallet2"></i> </h1>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <h2 class="text-center">
+            Monetarias
+            <i class="bi bi-cash-stack"></i>
+        </h2>
+        <a href="/Cuentas/CrearCuentaMonetaria" class="btn btn-primary mb-3 w-100">
+            Crear cuenta monetaria <i class="bi bi-plus-circle"></i>
+        </a>
+        <ul class="list-group">
+            @foreach (Monetaria monetaria in _cuentasMonetarias)
+            {
+                if (monetaria.Espacio.Equals(_espacioActual))
+                {
+                    <li class="list-group-item">
+                        <div>
+                            <div> Monetaria: @monetaria.Nombre</div>
+                            <div> Dueño: @monetaria.Propietario.Nombre</div>
+                        </div>
+
+                        <li class="list-group-item">
+                            <div> Datos de la cuenta monetaria:</div>
+                            <div> - Monto: @monetaria.Moneda.SimboloMonetario @monetaria.Monto</div>
+                            <div> - Creación: @monetaria.FechaDeCreacion.ToShortDateString()</div>
+                        </li>
+                        <div class="d-flex justify-content-between align-items-center">
+                            @if (monetaria.Propietario.Equals(_usuarioActual))
+                            {
+                                @if (MonetariaLogica.
+                                    ValidarSiMonetariaTieneUnaTransacciónAsociada(monetaria,
+                                    _espacioActual, TransaccionLogica))
+                                {
+                                    <button class="btn btn-secondary btn-sm ml-2 w-50">
+                                        No se puede eliminar <i class="bi bi-shield-x"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-danger btn-sm ml-2 w-50" @onclick="() => EliminarCuentaMonetaria(monetaria.Id)">
+                                        Eliminar <i class="bi bi-trash"></i>
+                                    </button>
+                                }
+                                <a class="btn btn-success btn-sm w-50" href="Cuentas/@monetaria.Id/EditarCuentaMonetaria">
+                                    Editar <i class="bi bi-pencil-square"></i>
+                                </a>
+                            }
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+    <div class="col-lg-6 col-md-12">
+        <h2 class="text-center">
+            Tarjetas de crédito
+            <i class="bi bi-credit-card-2-front"></i>
+        </h2>
+        <a href="/Cuentas/CrearTarjetaDeCredito" class="btn btn-primary mb-3 w-100">
+            Crear tarjeta de crédito <i class="bi bi-plus-circle"></i>
+        </a>
+        <ul class="list-group">
+            @foreach (TarjetaDeCredito tarjetaDeCredito in _tarjetasDeCredito)
+            {
+                <li class="list-group-item">
+                    <div>
+                        <div>
+                            <div> Tarjeta: @tarjetaDeCredito.Nombre</div>
+                            <div> Titular: @tarjetaDeCredito.Propietario.Nombre</div>
+                        </div>
+
+                        <li class="list-group-item">
+                            <div> Datos de la tarjeta:</div>
+                            <div> - Banco Emisor: @tarjetaDeCredito.BancoEmisor</div>
+                            <div> - Crédito disponible: @tarjetaDeCredito.Moneda.SimboloMonetario 
+                                @tarjetaDeCredito.CreditoDisponible</div>
+                            <div> - Creación: @tarjetaDeCredito.FechaDeCreacion.ToShortDateString() </div>
+                            <div> - Cierre: @tarjetaDeCredito.FechaDeCierre.ToShortDateString()</div>
+                            <div> - **** **** **** @tarjetaDeCredito.UltimosCuatroDigitos</div>
+                        </li>
+
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        @if (tarjetaDeCredito.Propietario.Equals(_usuarioActual))
+                        {
+                            @if (TarjetaDeCreditoLogica.
+                                ValidarSiTarjetaDeCreditoTieneUnaTransacciónAsociada
+                                (tarjetaDeCredito, _espacioActual, TransaccionLogica))
+                            {
+                                <button class="btn btn-secondary btn-sm ml-2 w-50">
+                                    No se puede eliminar <i class="bi bi-shield-x"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger btn-sm ml-2 w-50" @onclick="() => EliminarCuentaTarjetaDeCredito(tarjetaDeCredito.Id)">
+                                    Eliminar <i class="bi bi-trash"></i>
+                                </button>
+                            }
+                            <a class="btn btn-success btn-sm w-50" href="Cuentas/@tarjetaDeCredito.Id/EditarTarjetaDeCredito">
+                                Editar <i class="bi bi-pencil-square"> </i>
+                            </a>
+                        }
+                    </div>
+
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+
+@code {
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+    private List<Monetaria> _cuentasMonetarias;
+    private List<TarjetaDeCredito> _tarjetasDeCredito;
+
+    protected override void OnInitialized()
+    {
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _cuentasMonetarias = MonetariaLogica.ListarMonetariasDeUnEspacio(_espacioActual);
+        _tarjetasDeCredito = TarjetaDeCreditoLogica.ListarTarjetasDeCreditoDeUnEspacio(_espacioActual);
+    }
+
+    private void EliminarCuentaTarjetaDeCredito(int idAEliminar)
+    {
+        TarjetaDeCreditoLogica.EliminarTarjetaDeCredito(idAEliminar);
+
+        CargarDatos();
+    }
+
+    private void EliminarCuentaMonetaria(int idAEliminar)
+    {
+        MonetariaLogica.EliminarMonetaria(idAEliminar);
+
+        CargarDatos();
+    }
+
+}

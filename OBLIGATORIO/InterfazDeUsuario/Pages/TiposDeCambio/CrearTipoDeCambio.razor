@@ -1,0 +1,124 @@
+﻿@page "/TiposDeCambio/CrearTipoDeCambio"
+
+@using Dominio
+@using Dominio.Constantes
+@using Logica
+
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject MonedaLogica MonedaLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear tipo de cambio</PageTitle>
+
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Crear tipo de cambio <i class="bi bi-cash"></i></h1>
+        <form>
+            <div class="mb-3">
+                <label for="valorDelDolar" class="form-label">Valor de la moneda en peso uruguayo</label>
+                <input type="number" class="form-control" id="valorDelDolar" required @bind="_valorDelaMoneda">
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaDeCambio">Fecha:</label>
+                    <input type="date" class="form-control" id="fechaDeCambio" @bind="_fecha">
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="monedas" for="misMonedas">Moneda:</label>
+                    <select @bind="_idMonedaSeleccionada" class="form-select form-select mb-3" id="misMonedas">
+                        <option value="0">Seleccionar una opción</option>
+                        @foreach (Moneda moneda in MonedaLogica.ListarMonedas())
+                        {
+                            @if (moneda.Nombre != ConstantesMoneda.PesoUruguayo)
+                            {
+                                <option value="@moneda.Id"> @moneda.Nombre (@moneda.SimboloMonetario) </option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="CrearTipoDeCambioNuevo">
+                    Crear <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private TipoDeCambio? _tipoDeCambioACrear;
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+
+    private float _valorDelaMoneda;
+    private int _idMonedaSeleccionada;
+
+    private DateTime _fecha;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _fecha = DateTime.Today;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/TiposDeCambio");
+    }
+
+    private void CrearTipoDeCambioNuevo()
+    {
+        try
+        {
+            if (_idMonedaSeleccionada == 0)
+            {
+                _mensajeDeError = "Seleccione una moneda.";
+            }
+            else
+            {
+                _tipoDeCambioACrear = new TipoDeCambio()
+                {
+                    Moneda = MonedaLogica.EncontrarMoneda(_idMonedaSeleccionada),
+                    UsuarioCreador = _usuarioActual,
+                    Espacio = _espacioActual,
+                    ValorDeLaMoneda = _valorDelaMoneda,
+                    Fecha = _fecha
+                };
+
+                TipoDeCambioLogica.AgregarTipoDeCambio(_tipoDeCambioACrear);
+                NavigationManager.NavigateTo("/TiposDeCambio");
+            }
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

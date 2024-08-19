@@ -1,0 +1,160 @@
+@page "/Cuentas/{id:int}/EditarTarjetaDeCredito"
+@using Dominio
+@using Logica
+@inject TarjetaDeCreditoLogica TarjetaDeCreditoLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject MonedaLogica MonedaLogica
+@inject TransaccionLogica TransaccionLogica
+@inject NavigationManager NavigationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar tarjeta de crédito <i class="bi bi-credit-card-2-front"></i></h1>
+
+        <form>
+            <div class="mb-3">
+                <label for="nombre">Nombre </label>
+                <input class="form-control" type="text" id="nombre" @bind="_nombre">
+            </div>
+
+            <div class="mb-3">
+                <label for="bancoEmisor">Banco Emisor</label>
+                <input type="text" class="form-control" id="bancoEmisor" required @bind="_bancoEmisor"/>
+            </div>
+
+            <div class="mb-3">
+                <label for="ultimos4Digitos">Ultimos Cuatro Digitos</label>
+                <input type="text" class="form-control" id="ultimos4Digitos" maxlength="4" required
+                       @bind="_ultimosCuatroDigitos"/>
+            </div>
+
+            <div class="mb-3">
+                <label for="creditoDisponible">Credito Disponible</label>
+                <input type="number" class="form-control" id="creditoDisponible" required @bind="_creditoDisponible"/>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Fecha de Cierre:</label>
+                    <input type="date" class="form-control" id="fechaInicio" @bind="_fechaDeCierre">
+                </div>
+            </div>
+
+            @if (TarjetaDeCreditoLogica.ValidarSiTarjetaDeCreditoTieneUnaTransacciónAsociada(
+                _cuentaActual, _espacioActual, TransaccionLogica))
+            {
+                <div class="form-group">
+                    <label class="monedas" for="misMonedas">Monedas:</label>
+                    <input type="text" class="form-control" id="misMonedas" readonly
+                           value="@($"{_monedaSeleccionada.Nombre} " + 
+                                    $"({_monedaSeleccionada.SimboloMonetario})")"/>
+                </div>
+                <div id="informacion" class="form-text mb-3">
+                    La cuenta tiene una transaccion asociada,
+                    no se puede editar la moneda.
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="monedas" for="misMonedas">Monedas:</label>
+                    <select @bind="_idMonedaSeleccionada" class="form-select form-select mb-3" id="misMonedas">
+                        @foreach (Moneda moneda in MonedaLogica.ListarMonedas())
+                        {
+                            <option value="@moneda.Id"> @moneda.Nombre (@moneda.SimboloMonetario)</option>
+                        }
+                    </select>
+                </div>
+            }
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary" @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+    private TarjetaDeCredito? _cuentaActual;
+    private TarjetaDeCredito _cuentaEditada;
+
+    private string _nombre;
+    private string _bancoEmisor;
+    private string _ultimosCuatroDigitos;
+    private float? _creditoDisponible;
+    private DateTime _fechaDeCierre;
+    private Moneda _monedaSeleccionada;
+    private int _idMonedaSeleccionada;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _cuentaActual = (TarjetaDeCredito)TarjetaDeCreditoLogica.EncontrarTarjetaDeCredito(Id);
+
+        _nombre = _cuentaActual.Nombre;
+        _idMonedaSeleccionada = _cuentaActual.Moneda.Id;
+        _bancoEmisor = _cuentaActual.BancoEmisor;
+        _ultimosCuatroDigitos = _cuentaActual.UltimosCuatroDigitos;
+        _creditoDisponible = _cuentaActual.CreditoDisponible;
+        _fechaDeCierre = _cuentaActual.FechaDeCierre;
+        
+        _monedaSeleccionada = MonedaLogica.EncontrarMoneda(_idMonedaSeleccionada);
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void GuardarCambios()
+    {
+        try
+        {
+            _cuentaEditada = new TarjetaDeCredito()
+            {
+                Id = Id,
+                Nombre = _nombre,
+                Propietario = _usuarioActual,
+                Espacio = _espacioActual,
+                Moneda = _monedaSeleccionada,
+                BancoEmisor = _bancoEmisor,
+                UltimosCuatroDigitos = _ultimosCuatroDigitos,
+                CreditoDisponible = _creditoDisponible,
+                FechaDeCreacion = _cuentaActual.FechaDeCreacion,
+                FechaDeCierre = _fechaDeCierre
+            };
+
+            TarjetaDeCreditoLogica.ActualizarTarjetaDeCredito(_cuentaEditada);
+            NavigationManager.NavigateTo("/Cuentas");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+}

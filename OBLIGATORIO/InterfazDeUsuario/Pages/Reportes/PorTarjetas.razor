@@ -1,0 +1,131 @@
+﻿@page "/Reportes/PorTarjetas"
+@using Dominio
+@using Logica
+
+@inject TarjetaDeCreditoLogica TarjetaDeCreditoLogica
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject ReportesTarjetasDeCreditoLogica ReportesTarjetasDeCreditoLogica
+
+<PageTitle>Reporte por Tarjetas de crédito</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<h1>Reportes <i class="bi bi-bar-chart"></i></h1>
+<a href="/Reportes" class="btn btn-primary btn-sm mb-3">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h2>Reporte Tarjetas de crédito <i class="bi bi-credit-card-2-front"></i> </h2>
+        <form>
+            <div class="form-group">
+                <label class="cuentas" for="misCuentas">Tarjetas de crédito:</label>
+                <select @bind="_idTarjetaSeleccionada" class="form-select form-select mb-3" id="misCuentas">
+                    <option value="0">Seleccionar una tarjeta</option>
+                    @foreach (TarjetaDeCredito tarjetaDeCredito in 
+                        TarjetaDeCreditoLogica.ListarTarjetasDeCreditoDeUnEspacio(_espacioActual))
+                    {
+                        {
+                            <option value="@tarjetaDeCredito.Id">
+                                @tarjetaDeCredito.Nombre
+                            </option>
+                        }
+                    }
+                </select>
+                <button type="button" class="btn btn-primary mt w-100"
+                        @onclick="GenerarReporteDeTarjeta">
+                    Generar reporte <i class="bi bi-card-list"></i>
+                </button>
+            </div>
+        </form>
+        @if (_transaccionesAReportar.Count > 0 && _tarjetaSeleccionada != null)
+        {
+            <ul class="list-group mt-3">
+                <h3>Tarjeta: @_tarjetaSeleccionada.Nombre </h3>
+
+                @{ _costoTotal = 0; }
+                @foreach (Transaccion transaccion in _transaccionesAReportar)
+                {
+                    _costoTotal += ReportesTarjetasDeCreditoLogica.ConvertirAPesosUruguayos
+                        (transaccion, TipoDeCambioLogica);
+                    <li class="list-group-item">
+                        <div> - Transaccion: @transaccion.Nombre </div>
+                        <div>
+                            - Costo: UYU @ReportesTarjetasDeCreditoLogica.ConvertirAPesosUruguayos(transaccion, TipoDeCambioLogica)
+                            (transaccion, TipoDeCambioLogica)
+                        </div>
+                        <div> - Categoría: @transaccion.Categoria.Nombre</div>
+                        <div> - Fecha: @transaccion.Fecha.ToShortDateString()</div>
+                    </li>
+                }
+                <li class="list-group-item">Total a pagar: UYU @_costoTotal</li>
+            </ul>
+        }
+        else if (_reporteGenerado)
+        {
+            <p class="list-group-item mt-3">
+                No se realizó ningún pago con esta
+                tarjeta en el último mes.
+            </p>
+        }
+    </div>
+</div>
+
+@code {
+    private string _idTarjetaSeleccionada;
+    private Espacio _espacioActual;
+
+    private IList<Transaccion> _transaccionesAReportar;
+    private TarjetaDeCredito _tarjetaSeleccionada;
+    private float? _costoTotal;
+    private bool _reporteGenerado;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _transaccionesAReportar = new List<Transaccion>();
+        _idTarjetaSeleccionada = "0";
+    }
+
+    private void GenerarReporteDeTarjeta()
+    {
+        try
+        {
+            _reporteGenerado = false;
+            _costoTotal = 0;
+
+            _tarjetaSeleccionada = (TarjetaDeCredito)TarjetaDeCreditoLogica.EncontrarTarjetaDeCredito(int.Parse(_idTarjetaSeleccionada));
+
+            if (_tarjetaSeleccionada == null)
+            {
+                _mensajeDeError = "Seleccione una tarjeta de crédito.";
+            }
+            else
+            {
+                _transaccionesAReportar = ReportesTarjetasDeCreditoLogica.GastosDeUnaTarjetaDelUltimoMes(
+                    TransaccionLogica, EspacioLogica, _tarjetaSeleccionada);
+                _mensajeDeError = "";
+                _reporteGenerado = true;
+            }
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+    }
+
+}

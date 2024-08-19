@@ -1,0 +1,168 @@
+@page "/Categorias/{id:int}/EditarCategoria"
+@using Dominio
+@using Dominio.Constantes
+@using Logica
+@inject CategoriaLogica CategoriaLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Editar categoría</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar categoría <i class="bi bi-tags"></i></h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre" readonly>
+                <div id="informacion-direccion" class="form-text">El nombre no se puede editar.</div>
+            </div>
+            
+            <fieldset>
+                <div class="mb-3">
+                    <legend for="monedaRadioButton" class="form-label fs-6">Estatus</legend>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="estatus" id="Activa" value="Activa"
+                               @onchange="ActualizarEstatusSeleccionado" 
+                               checked="@(_estatus == ConstantesCategoria.estatusActiva)">
+                        <label class="form-check-label" for="Activa"> Activa </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="estatus" id="Inactiva" value="Inactiva"
+                               @onchange="ActualizarEstatusSeleccionado" 
+                               checked="@(_estatus == ConstantesCategoria.estatusInactiva)">
+                        <label class="form-check-label" for="Inactiva"> Inactiva </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            @if (CategoriaLogica.ValidarSiCategoriaTieneUnaTransacciónAsociada(
+                _categoriaActual, _espacioActual, TransaccionLogica))
+            {
+                <fieldset disabled>
+                    <div class="mb-3">
+                        <legend for="monedaRadioButton" class="form-label fs-6">Tipo</legend>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipo" id="Costo" value="Costo"
+                                   checked="@(_tipo == ConstantesCategoria.tipoCosto)">
+                            <label class="form-check-label" for="Costo"> Costo </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipo" id="Ingreso" value="Ingreso"
+                                   checked="@(_tipo == ConstantesCategoria.tipoIngreso)">
+                            <label class="form-check-label" for="Ingreso"> Ingreso </label>
+                        </div>
+                    </div>
+                    <div id="informacion" class="form-text mb-3">
+                        La categoría tiene una transaccion asociada,
+                        no se puede editar el tipo.
+                    </div>
+                </fieldset>
+            }
+            else
+            {
+                <fieldset>
+                    <div class="mb-3">
+                        <legend for="monedaRadioButton" class="form-label fs-6">Tipo</legend>
+
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipo" id="Costo" value="Costo"
+                                   @onchange="ActualizarTipoSeleccionado" 
+                                   checked="@(_tipo == ConstantesCategoria.tipoCosto)">
+                            <label class="form-check-label" for="Costo"> Costo </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipo" id="Ingreso" value="Ingreso"
+                                   @onchange="ActualizarTipoSeleccionado" 
+                                   checked="@(_tipo == ConstantesCategoria.tipoIngreso)">
+                            <label class="form-check-label" for="Ingreso"> Ingreso </label>
+                        </div>
+
+                    </div>
+                </fieldset>
+            }
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar"> Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+    
+    private Categoria _categoriaActual;
+    private Categoria _categoriaEditada;
+    private string _nombre;
+    private string _estatus;
+    private string _tipo;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _categoriaActual = CategoriaLogica.EncontrarCategoria(Id);
+        _nombre = _categoriaActual.Nombre;
+        _estatus = _categoriaActual.Estatus;
+        _tipo = _categoriaActual.Tipo;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Categorias");
+    }
+
+    private void GuardarCambios()
+    {
+        _categoriaEditada = new Categoria()
+        {
+            Id = Id,
+            Nombre = _nombre,
+            UsuarioCreador = _usuarioActual,
+            Espacio = _espacioActual,
+            FechaDeCreacion = _categoriaActual.FechaDeCreacion,
+            Estatus = _estatus,
+            Tipo = _tipo,
+        };
+
+        CategoriaLogica.ActualizarCategoria(_categoriaEditada);
+        NavigationManager.NavigateTo("/categorias");
+    }
+
+    private void ActualizarEstatusSeleccionado(ChangeEventArgs e)
+    {
+        _estatus = e.Value.ToString();
+    }
+
+    private void ActualizarTipoSeleccionado(ChangeEventArgs e)
+    {
+        _tipo = e.Value.ToString();
+    }
+
+}

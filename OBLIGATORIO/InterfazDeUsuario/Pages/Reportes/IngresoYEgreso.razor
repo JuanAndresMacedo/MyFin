@@ -1,0 +1,172 @@
+﻿@page "/Reportes/IngresosYEgresos"
+@using Logica
+@using Dominio
+
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject EspacioLogica EspacioLogica
+@inject ReporteIngresoYEgresoLogica ReporteIngresoYEgresoLogica
+
+<PageTitle>Reporte ingresos y costos</PageTitle>
+
+<h1>Reportes <i class="bi bi-bar-chart"></i></h1>
+<a href="/Reportes" class="btn btn-primary btn-sm mb-3">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+
+<div class="container text-center">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <h2>Reporte de costos e ingresos <i class="bi bi-clipboard-data"></i> </h2>
+        </div>
+    </div>
+</div>
+
+<form>
+    <div class="row mb-3">
+        <label for="fechaInicio">Mes:</label>
+        <div class="col-md-6">
+
+            <input type="month" class="form-control w-100" id="fechaInicio" @bind="_mesMostrado">
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary mb-3 w-100" @onclick="MostrarIngresosCostos">
+        Mostrar reportes de
+        @_mesMostrado.ToString("MMMM") <i class="bi bi-filter"></i>
+    </button>
+</form>
+
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <h2 class="text-center"> Costos </h2>
+        <ul class="list-group">
+            @for (int i = 0; i < _diasDelMes; i++)
+            {
+                if (_costosUltimoMes[i] != 0)
+                {
+                    <li class="list-group-item">
+                        <p>@(i + 1)/@_mesFijoParaQueNoCambieConBind.Month : $ @_costosUltimoMes[i]</p>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <h2 class="text-center"> Ingresos </h2>
+        <ul class="list-group">
+            @for (int i = 0; i < _diasDelMes; i++)
+            {
+                if (_ingresosUltimoMes[i] != 0)
+                {
+                    <li class="list-group-item">
+                        <p>@(i + 1)/@_mesFijoParaQueNoCambieConBind.Month : $ @_ingresosUltimoMes[i]</p>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    
+    <div class="col-lg-6 p-0">
+        <ul class="list-group mt-3">
+            @for (int i = 0; i < _diasDelMes; i++)
+            {
+                float? porcentaje = 0;
+                if (maximo != 0)
+                {
+                    porcentaje = _costosUltimoMes[i] / maximo * 100; 
+                }
+                
+                <li class="list-group-item p-1">
+                    <p class="mb-0">@(i + 1)/@_mesFijoParaQueNoCambieConBind.Month</p>
+
+                    <div class="progress" style="direction: rtl; height: 25px">
+                        <div class="progress-bar bg-danger" role="progressbar"
+                             style="width: @String.Format("{0:0}", porcentaje)%">
+                            @_costosUltimoMes[i]-
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="col-lg-6 p-0">
+        <ul class="list-group mt-3">
+            @for (int i = 0; i < _diasDelMes; i++)
+            {
+                float? porcentaje = 0;
+                if (maximo != 0)
+                {
+                    porcentaje = _ingresosUltimoMes[i] / maximo * 100; 
+                }
+                
+                <li class="list-group-item p-1">
+                    <p class="mb-0">@(i + 1)/@_mesFijoParaQueNoCambieConBind.Month</p>
+                    <div class="progress" style="height: 25px">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: @String.Format("{0:0}", porcentaje)%">
+                            +@_ingresosUltimoMes[i]
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+</div>
+
+
+@code {
+    private float?[] _ingresosUltimoMes;
+    private float?[] _costosUltimoMes;
+    private DateTime _mesMostrado;
+    private DateTime _mesFijoParaQueNoCambieConBind;
+    private int _diasDelMes;
+    private float montoTotalDiario;
+    private float?[] maximos = new float?[2];
+    private float? maximo;
+    private Espacio _espacioActual;
+    private List<Transaccion> _transaccionesDelEspacioActual;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        
+        _transaccionesDelEspacioActual = TransaccionLogica.ListarTransaccionesDeUnEspacio(_espacioActual).ToList();
+        _mesMostrado = DateTime.Today;
+        _mesFijoParaQueNoCambieConBind = _mesMostrado;
+        _diasDelMes = DateTime.DaysInMonth(DateTime.Today.Year, _mesMostrado.Month);
+        
+        _ingresosUltimoMes = ReporteIngresoYEgresoLogica.SumaIngresosPorDiaDeUnMes(
+            ReporteIngresoYEgresoLogica.TransaccionesDeUnMes(
+                _transaccionesDelEspacioActual, _mesMostrado), TipoDeCambioLogica, _diasDelMes);
+        
+        _costosUltimoMes = ReporteIngresoYEgresoLogica.SumaCostosPorDiaDeUnMes(
+            ReporteIngresoYEgresoLogica.TransaccionesDeUnMes(
+                _transaccionesDelEspacioActual, _mesMostrado), TipoDeCambioLogica, _diasDelMes);
+
+        maximos[0] = _ingresosUltimoMes.Max();
+        maximos[1] = _costosUltimoMes.Max();
+        maximo = maximos.Max();
+    }
+
+    private void MostrarIngresosCostos()
+    {
+        _transaccionesDelEspacioActual = TransaccionLogica.ListarTransaccionesDeUnEspacio(_espacioActual).ToList();
+        _diasDelMes = DateTime.DaysInMonth(DateTime.Today.Year, _mesMostrado.Month);
+        _mesFijoParaQueNoCambieConBind = _mesMostrado;
+        _ingresosUltimoMes = ReporteIngresoYEgresoLogica.SumaIngresosPorDiaDeUnMes(
+            ReporteIngresoYEgresoLogica.TransaccionesDeUnMes(
+                _transaccionesDelEspacioActual, _mesMostrado), TipoDeCambioLogica, _diasDelMes);
+        
+        _costosUltimoMes = ReporteIngresoYEgresoLogica.SumaCostosPorDiaDeUnMes(
+            ReporteIngresoYEgresoLogica.TransaccionesDeUnMes(
+                _transaccionesDelEspacioActual, _mesMostrado), TipoDeCambioLogica, _diasDelMes);
+        
+        maximos[0] = _ingresosUltimoMes.Max();
+        maximos[1] = _costosUltimoMes.Max();
+        maximo = maximos.Max();
+    }
+}

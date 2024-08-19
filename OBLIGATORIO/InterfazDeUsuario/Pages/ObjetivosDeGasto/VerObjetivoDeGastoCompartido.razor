@@ -1,0 +1,64 @@
+﻿@page "/Objetivo/{Token}/"
+@using Dominio
+@using Logica
+@inject ObjetivoDeGastoLogica ObjetivoDeGastoLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject TransaccionLogica TransaccionLogica
+@layout SinNavLayout
+
+<PageTitle>Objetivo de gasto compartido:</PageTitle>
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        @if (_objetivoDeGastoActual is null)
+        {
+            <h1 class="text-center">Error:</h1>
+            <h2 class="text-center">El objetivo de gasto compartido no fue encontrado.</h2>
+        }
+        else
+        {
+            <h1 class="text-center">El objetivo de @_objetivoDeGastoActual.UsuarioCreador.Nombre</h1>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div>
+                        - Categorias:
+                        @for (int i = 0; i < _objetivoDeGastoActual.Categorias.Count; i++)
+                        {
+                            @_objetivoDeGastoActual.Categorias[i].Nombre
+                            @if (i < _objetivoDeGastoActual.Categorias.Count - 1)
+                            {
+                                @(" - ")
+                            }
+                        }
+                    </div>
+                    <div>
+                        - Objetivo: @_objetivoDeGastoActual.Titulo
+
+                    </div>
+                    <div>
+                        - Gastado actualmente (UYU):
+                        @ObjetivoDeGastoLogica.GastadoActualmenteEnObjetivo(
+                            _objetivoDeGastoActual.Id, TransaccionLogica, TipoDeCambioLogica)
+
+                    </div>
+                </li>
+
+            </ul>
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string? Token { get; set; }
+
+    private ObjetivoDeGasto _objetivoDeGastoActual;
+
+    protected override void OnInitialized()
+    {
+        _objetivoDeGastoActual = ObjetivoDeGastoLogica.ListarObjetivosDeGasto().
+            Where(objetivo => objetivo.Token == Token).FirstOrDefault();
+    }
+
+}

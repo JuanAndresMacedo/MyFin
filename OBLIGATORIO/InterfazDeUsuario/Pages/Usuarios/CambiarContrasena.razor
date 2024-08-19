@@ -1,0 +1,100 @@
+﻿@page "/CambiarContrasena"
+@using Logica
+@using Dominio
+@inject UsuarioLogica UsuarioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Cambiar contraseña</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Cambiar contraseña <i class="bi bi-shield-lock"></i> </h1>
+
+        <form>
+            <div class="mb-3">
+                <label for="contrasenaActual" class="form-label">Contraseña actual</label>
+                <input type="password" class="form-control" id="contrasenaActual" required @bind="_contrasena">
+            </div>
+
+            <div class="mb-3">
+                <label for="contrasenaNueva" class="form-label">Contraseña nueva</label>
+                <input type="password" class="form-control" id="contrasenaNueva" required @bind="_nuevaContrasena">
+                <div id="requisito-contrasena" class="form-text">
+                     Mínimo 10 caracteres - Máximo 30 - Debe incluir al menos una mayúscula.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmarContrasena" class="form-label">Confirmar contraseña</label>
+                <input type="password" class="form-control" id="confirmarContrasena" required 
+                       @bind="_confirmacionContrasena">
+            </div>
+        </form>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="button" class="btn btn-secondary" @onclick="CancelarCambiarContrasena">Cancelar </button>
+            <button type="button" class="btn btn-danger" @onclick="ConfirmarCambiarContrasena">
+                 Confirmar <i class="bi bi-check2"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Usuario _usuarioActual;
+    private Usuario? _usuarioEditado;
+    private string _contrasena;
+    private string _nuevaContrasena;
+    private string _confirmacionContrasena;
+
+    private string _mensajeDeError;
+    
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+    }
+    
+    private void CancelarCambiarContrasena()
+    {
+        NavigationManager.NavigateTo("/Perfil");
+    }
+
+    private void ConfirmarCambiarContrasena()
+    {
+        try
+        {
+            UsuarioLogica.PermitirCambiarContraseña(_usuarioActual, _contrasena);
+            
+            _usuarioEditado = new Usuario()
+            {
+                Id = _usuarioActual.Id,
+                Nombre = _usuarioActual.Nombre,
+                Apellido = _usuarioActual.Apellido,
+                Correo = _usuarioActual.Correo,
+                Contrasena = _nuevaContrasena,
+                Direccion = _usuarioActual.Direccion,
+            };
+
+            UsuarioLogica.ValidarConfirmacionContrasena(_usuarioEditado, _confirmacionContrasena);
+            UsuarioLogica.ActualizarUsuario(_usuarioEditado);
+            NavigationManager.NavigateTo("/Perfil");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+}

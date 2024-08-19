@@ -1,0 +1,107 @@
+﻿@page "/TiposDeCambio/{id:int}/EditarTipoDeCambio"
+@using Dominio
+@using Logica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject EspacioLogica EspacioLogica
+@inject NavigationManager NavigationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar tipo de cambio <i class="bi bi-cash"></i></h1>
+
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaDeCambio">Moneda:</label>
+                    <input type="text" class="form-control" id="moneda" @bind="_nombreMoneda" disabled>
+                    <div id="requisito-moneda" class="form-text">La moneda no se puede editar.</div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <label for="fechaDeCambio">Fecha:</label>
+                    <input type="date" class="form-control" id="fechaDeCambio" @bind="_fecha" disabled>
+                    <div id="requisito-fecha" class="form-text">La fecha no se puede editar.</div>
+                </div>
+
+            </div>
+
+            <div class="mb-3">
+                <label for="valorDelDolar" class="form-label">Valor de la moneda</label>
+                <input type="number" class="form-control" id="valorDelDolar" required @bind="_valorDeLaMoneda">
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar"> Cancelar </button>
+                <button type="button" class="btn btn-primary" @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    private Espacio _espacioActual;
+
+    private DateTime _fecha;
+    private TipoDeCambio _tipoDeCambioActual;
+    private TipoDeCambio _tipoDeCambioEditado;
+    private float? _valorDeLaMoneda;
+    private string? _nombreMoneda;
+
+    private string _mensajeDeError;
+
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _tipoDeCambioActual = TipoDeCambioLogica.EncontrarTipoDeCambio(Id);
+        _fecha = _tipoDeCambioActual.Fecha;
+        _nombreMoneda = _tipoDeCambioActual.Moneda.Nombre;
+        _valorDeLaMoneda = _tipoDeCambioActual.ValorDeLaMoneda;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/TiposDeCambio");
+    }
+
+    private void GuardarCambios()
+    {
+        try
+        {
+            _tipoDeCambioEditado = new TipoDeCambio()
+            {
+                Id = _tipoDeCambioActual.Id,
+                Fecha = _tipoDeCambioActual.Fecha,
+                Moneda = _tipoDeCambioActual.Moneda,
+                Espacio = _espacioActual,
+                ValorDeLaMoneda = _valorDeLaMoneda
+            };
+
+            TipoDeCambioLogica.ActualizarTipoDeCambio(_tipoDeCambioEditado);
+            NavigationManager.NavigateTo("/TiposDeCambio");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

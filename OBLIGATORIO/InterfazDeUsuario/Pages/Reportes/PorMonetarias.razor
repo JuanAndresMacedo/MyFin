@@ -1,0 +1,148 @@
+﻿ @page "/Reportes/BalanceMonetarias"
+@using Dominio
+@using Dominio.Constantes
+@using Logica
+
+@inject MonetariaLogica MonetariaLogica
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject ReporteMonetariasLogica ReporteMonetariasLogica
+
+<PageTitle>Reporte por monetarias</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<h1>Reportes <i class="bi bi-bar-chart"></i></h1>
+<a href="/Reportes" class="btn btn-primary btn-sm mb-3">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h2>Cuentas monetarias <i class="bi bi-credit-card-2-front"></i> </h2>
+        <form>
+            <div class="form-group">
+                <label class="cuentas" for="misCuentas">Monetarias:</label>
+                <select @bind="_idMonetariaSeleccionada" class="form-select form-select mb-3" id="misCuentas">
+                    <option value="0">Seleccionar una cuenta monetaria</option>
+                    @foreach (Monetaria monetaria in 
+                        MonetariaLogica.ListarMonetariasDeUnEspacio(_espacioActual))
+                    {
+                        <option value="@monetaria.Id">
+                            @monetaria.Nombre
+                        </option>
+                    }
+                </select>
+
+                <button type="button" class="btn btn-primary mt w-100"
+                        @onclick="GenerarReporteDeMonetaria">
+                    Generar reporte <i class="bi bi-card-list"></i>
+                </button>
+
+            </div>
+        </form>
+        @if (_transaccionesAReportar.Count > 0 && _monetariaSeleccionada != null)
+        {
+            <ul class="list-group mt-3">
+                <h3>Cuenta monetaria: @_monetariaSeleccionada.Nombre </h3>
+                @{ _ingresosCostos = 0; }
+                @foreach (Transaccion transaccion in _transaccionesAReportar)
+                {
+                    if (transaccion.Tipo != ConstantesCategoria.tipoCosto)
+                    {
+                        _ingresosCostos += @ReporteMonetariasLogica.ConvertirAPesosUruguayos(
+                            transaccion, TipoDeCambioLogica);
+                        
+                        <li class="list-group-item">
+                            <div> Transaccion: @transaccion.Nombre </div>
+                            Ingreso + UYU @ReporteMonetariasLogica.ConvertirAPesosUruguayos(
+                                 transaccion, TipoDeCambioLogica) 
+                        </li>
+                    }
+                    else
+                    {
+                        _ingresosCostos -= @ReporteMonetariasLogica.ConvertirAPesosUruguayos(
+                            transaccion, TipoDeCambioLogica);
+                        <li class="list-group-item">
+                            <div> Transaccion: @transaccion.Nombre </div>
+                            Gasto - UYU @ReporteMonetariasLogica.ConvertirAPesosUruguayos(
+                                 transaccion, TipoDeCambioLogica) 
+                        </li>
+                    }
+                    
+                }
+                <li class="list-group-item">
+                    <div> Ingresos - Costos = @_ingresosCostos </div>
+                    <div> Saldo = @_monetariaSeleccionada.Moneda.SimboloMonetario  @_monetariaSeleccionada.Monto </div>
+                </li>
+            </ul>
+        }
+        else if (_reporteGenerado)
+        {
+            <p class="list-group-item mt-3">No se realizó ningún pago con esta monetaria en el último mes.</p>
+        }
+    </div>
+</div>
+
+@code {
+    private Espacio _espacioActual;
+    
+    private string _idMonetariaSeleccionada;
+
+    private IList<Transaccion> _transaccionesAReportar;
+
+    private Monetaria _monetariaSeleccionada;
+
+    private float? _ingresosCostos;
+
+    private bool _reporteGenerado;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _transaccionesAReportar = new List<Transaccion>();
+        _idMonetariaSeleccionada = "0";
+    }
+
+    private void GenerarReporteDeMonetaria()
+    {
+        try
+        {
+            _reporteGenerado = false;
+            _ingresosCostos = 0;
+
+            _monetariaSeleccionada = (Monetaria)MonetariaLogica.EncontrarMonetaria
+                (int.Parse(_idMonetariaSeleccionada));
+
+            if (_monetariaSeleccionada == null)
+            {
+                _mensajeDeError = "Seleccione una cuenta monetaria.";
+            }
+
+            else
+            {
+                _transaccionesAReportar = ReporteMonetariasLogica.TransaccionesDeUnaCuentaMonetaria(
+                    TransaccionLogica, EspacioLogica, _monetariaSeleccionada);
+                _reporteGenerado = true;
+                _mensajeDeError = "";
+            }
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+    }
+
+}

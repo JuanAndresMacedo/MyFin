@@ -1,0 +1,145 @@
+@page "/Cuentas/CrearTarjetaDeCredito/"
+@using Dominio
+@using Logica
+@inject TarjetaDeCreditoLogica TarjetaDeCreditoLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject MonedaLogica MonedaLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear Tarjeta de Credito</PageTitle>
+
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Crear tarjeta de crédito <i class="bi bi-credit-card-2-front"></i></h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Banco Emisor</label>
+                <input type="text" class="form-control" id="apellido" required @bind="_bancoEmisor">
+            </div>
+
+            <div class="mb-3">
+                <label for="ultimos4Digitos" class="form-label">Últimos cuatro dígitos</label>
+                <input type="text" class="form-control" id="ultimos4Digitos" maxlength="4" required
+                       @bind="_ultimosCuatroDigitos">
+            </div>
+
+            <div class="mb-3">
+                <label for="creditoDisponible" class="form-label">Crédito Disponible</label>
+                <input type="number" class="form-control" id="creditoDisponible" required
+                       @bind="_creditoDisponible">
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Fecha de Creación:</label>
+                    <input type="date" class="form-control" id="fechaInicio" @bind="_fechaDeCreacion">
+                </div>
+                <div class="col-md-6">
+                    <label for="fechaCierre">Fecha de Cierre:</label>
+                    <input type="date" class="form-control" id="fechaCierre" @bind="_fechaDeCierre">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="espacios" for="misEspacios">Monedas:</label>
+                <select @bind="_idMonedaSeleccionada" class="form-select form-select mb-3" id="misEspacios">
+                    <option value="0">Seleccionar una opción</option>
+                    @foreach (Moneda moneda in MonedaLogica.ListarMonedas())
+                    {
+                        <option value="@moneda.Id"> @moneda.Nombre (@moneda.SimboloMonetario)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="CrearTarjetaDeCreditoNueva">
+                    Crear <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private TarjetaDeCredito? _tarjetaDeCreditoACrear;
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+    
+    private string _nombre;
+    private string _bancoEmisor;
+    private string _ultimosCuatroDigitos;
+    private float _creditoDisponible;
+    private DateTime _fechaDeCreacion;
+    private DateTime _fechaDeCierre;
+    private int _diaCierre;
+    private int _mesCierre;
+    private int _anioCierre;
+    private Moneda _monedaSeleccionada;
+    private int _idMonedaSeleccionada;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _fechaDeCreacion = DateTime.Today;
+        _fechaDeCierre = DateTime.Today.AddDays(1);
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void CrearTarjetaDeCreditoNueva()
+    {
+        try
+        {
+            _monedaSeleccionada = MonedaLogica.EncontrarMoneda(_idMonedaSeleccionada);
+            
+            _tarjetaDeCreditoACrear = new TarjetaDeCredito()
+            {
+                Nombre = _nombre,
+                Propietario = _usuarioActual,
+                Espacio = _espacioActual,
+                BancoEmisor = _bancoEmisor,
+                UltimosCuatroDigitos = _ultimosCuatroDigitos,
+                CreditoDisponible = _creditoDisponible,
+                Moneda = _monedaSeleccionada,
+                FechaDeCreacion = _fechaDeCreacion,
+                FechaDeCierre = _fechaDeCierre,
+            };
+
+            TarjetaDeCreditoLogica.AgregarTarjetaDeCredito(_tarjetaDeCreditoACrear);
+            NavigationManager.NavigateTo("/Cuentas");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

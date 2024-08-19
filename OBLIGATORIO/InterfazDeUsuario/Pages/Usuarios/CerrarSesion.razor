@@ -1,0 +1,36 @@
+﻿@page "/Salir"
+@using Logica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>MyFin</PageTitle>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <div class="text-center mt-4">
+            <div class="recuadro">
+                <h1 class="confirmar-salida"> ¿Está seguro que quiere salir? </h1>
+                <button class="btn btn-primary" @onclick="Quedarse"> Quedarse </button>
+                <button class="btn btn-danger" @onclick="SalirDelSitio">
+                     Salir <i class="bi bi-box-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    private void SalirDelSitio()
+    {
+        UsuarioLogica.CerrarSesion();
+        EspacioLogica.SalirDelEspacio();
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void Quedarse()
+    {
+        NavigationManager.NavigateTo("/Principal");
+    }
+}

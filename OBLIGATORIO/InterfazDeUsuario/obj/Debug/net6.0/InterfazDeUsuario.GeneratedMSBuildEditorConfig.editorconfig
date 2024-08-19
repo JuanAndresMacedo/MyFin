@@ -1,0 +1,192 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = InterfazDeUsuario
+build_property.RootNamespace = InterfazDeUsuario
+build_property.ProjectDir = C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\InterfazDeUsuario\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\InterfazDeUsuario
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Categorias/AdministrarCategorias.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xBZG1pbmlzdHJhckNhdGVnb3JpYXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Categorias/CrearCategoria.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xDcmVhckNhdGVnb3JpYS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Categorias/EditarCategoria.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xFZGl0YXJDYXRlZ29yaWEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Cuentas/CrearCuentaMonetaria.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VlbnRhc1xDcmVhckN1ZW50YU1vbmV0YXJpYS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Cuentas/CrearTarjetaDeCredito.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VlbnRhc1xDcmVhclRhcmpldGFEZUNyZWRpdG8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Cuentas/EditarCuentaMonetaria.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VlbnRhc1xFZGl0YXJDdWVudGFNb25ldGFyaWEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Cuentas/EditarTarjetaDeCredito.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VlbnRhc1xFZGl0YXJUYXJqZXRhRGVDcmVkaXRvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Espacios/CrearEspacio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXNwYWNpb3NcQ3JlYXJFc3BhY2lvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Espacios/Principal.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXNwYWNpb3NcUHJpbmNpcGFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/ObjetivosDeGasto/AdministrarObjetivosDeGasto.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT2JqZXRpdm9zRGVHYXN0b1xBZG1pbmlzdHJhck9iamV0aXZvc0RlR2FzdG8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/ObjetivosDeGasto/CrearObjetivoDeGasto.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT2JqZXRpdm9zRGVHYXN0b1xDcmVhck9iamV0aXZvRGVHYXN0by5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/ObjetivosDeGasto/VerObjetivoDeGastoCompartido.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT2JqZXRpdm9zRGVHYXN0b1xWZXJPYmpldGl2b0RlR2FzdG9Db21wYXJ0aWRvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/Gastos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcR2FzdG9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/IngresoYEgreso.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcSW5ncmVzb1lFZ3Jlc28ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/PorCategorias.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcUG9yQ2F0ZWdvcmlhcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/PorMonetarias.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcUG9yTW9uZXRhcmlhcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/PorObjetivosDeGasto.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcUG9yT2JqZXRpdm9zRGVHYXN0by5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/PorTarjetas.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcUG9yVGFyamV0YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Reportes/Reportes.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVwb3J0ZXNcUmVwb3J0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/TiposDeCambio/AdministrarTiposDeCambio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGlwb3NEZUNhbWJpb1xBZG1pbmlzdHJhclRpcG9zRGVDYW1iaW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/TiposDeCambio/CrearTipoDeCambio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGlwb3NEZUNhbWJpb1xDcmVhclRpcG9EZUNhbWJpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/TiposDeCambio/EditarTipoDeCambio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGlwb3NEZUNhbWJpb1xFZGl0YXJUaXBvRGVDYW1iaW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Transacciones/AdministrarTransacciones.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVHJhbnNhY2Npb25lc1xBZG1pbmlzdHJhclRyYW5zYWNjaW9uZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Transacciones/CrearTransaccion.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVHJhbnNhY2Npb25lc1xDcmVhclRyYW5zYWNjaW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Transacciones/EditarTransaccion.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVHJhbnNhY2Npb25lc1xFZGl0YXJUcmFuc2FjY2lvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Usuarios/AdministrarPerfil.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcQWRtaW5pc3RyYXJQZXJmaWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Usuarios/CambiarContrasena.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcQ2FtYmlhckNvbnRyYXNlbmEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Usuarios/EditarPerfil.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcRWRpdGFyUGVyZmlsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Usuarios/IniciarSesion.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcSW5pY2lhclNlc2lvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Usuarios/RegistrarUsuario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcUmVnaXN0cmFyVXN1YXJpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Cuentas/AdministrarCuentas.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VlbnRhc1xBZG1pbmlzdHJhckN1ZW50YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-smeceydo3z
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Espacios/CambiarDeEspacio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXNwYWNpb3NcQ2FtYmlhckRlRXNwYWNpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-i2timvfy23
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Espacios/EditarNombreEspacio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXNwYWNpb3NcRWRpdGFyTm9tYnJlRXNwYWNpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-7xa0ncwaye
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Espacios/ElegirEspacio.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXNwYWNpb3NcRWxlZ2lyRXNwYWNpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-utha2o5k0w
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Espacios/GestionarParticipantes.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXNwYWNpb3NcR2VzdGlvbmFyUGFydGljaXBhbnRlcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-aq3q0w92lc
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Usuarios/CerrarSesion.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3NcQ2VycmFyU2VzaW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-kqxo0h43f1
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-ak3qs8omw8
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-xymwu4ynhp
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Shared/SinNavLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFNpbk5hdkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-uuoe6zzpw4
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/juanm/OneDrive/Desktop/286894_290961_286403/OBLIGATORIO/InterfazDeUsuario/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,81 @@
+﻿@page "/TiposDeCambio"
+
+@using Dominio
+@using Logica
+
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject TransaccionLogica TransaccionLogica
+
+<PageTitle>Administrar tipos de cambio</PageTitle>
+
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h1 class="tipoDC-titulo text-center">Tipos de cambio <i class="bi bi-cash"></i> </h1>
+        <a href="/TiposDeCambio/CrearTipoDeCambio" class="btn btn-primary mb-3 w-100">
+            Agregar tipo de cambio <i class="bi bi-plus-circle"></i>
+        </a>
+        <ul class="list-group">
+            @foreach (TipoDeCambio tipoDC in _tiposDeCambios)
+            {
+                if (tipoDC.Espacio.Equals(_espacioActual))
+                {
+                    <li class="list-group-item">
+                        <div>
+                            <div> Fecha: @tipoDC.Fecha.ToShortDateString()</div>
+                            <div> Moneda: @tipoDC.Moneda.Nombre (@tipoDC.Moneda.SimboloMonetario)</div>
+                            <div> Valor de la moneda (UYU): @tipoDC.ValorDeLaMoneda</div>
+                            <div> Creado por: @tipoDC.UsuarioCreador.Nombre</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            @if (TipoDeCambioLogica.ValidarSiTipoDeCambioEsUtilizado(
+                                @tipoDC, _espacioActual, TransaccionLogica))
+                            {
+                                <button class="btn btn-secondary btn-sm ml-2 w-100">
+                                    No se puede editar ni eliminar <i class="bi bi-shield-x"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger btn-sm ml-2 w-50" @onclick="() => EliminarTipoDeCambio(tipoDC.Id)">
+                                    Eliminar <i class="bi bi-trash"></i>
+                                </button>
+                                <a class="btn btn-success btn-sm w-50"
+                                   href="TiposDeCambio/@tipoDC.Id/EditarTipoDeCambio">
+                                    Editar <i class="bi bi-pencil-square"></i>
+                                </a>
+                            }
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private List<TipoDeCambio> _tiposDeCambios;
+    private Espacio _espacioActual;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _tiposDeCambios = TipoDeCambioLogica.ListarTiposDeCambio().ToList();
+    }
+
+    private void EliminarTipoDeCambio(int idAEliminar)
+    {
+        TipoDeCambioLogica.EliminarTipoDeCambio(idAEliminar);
+
+        CargarDatos();
+    }
+
+}

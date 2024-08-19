@@ -1,0 +1,17 @@
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\bin\Debug\net6.0\Memoria.deps.json
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\bin\Debug\net6.0\Memoria.runtimeconfig.json
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\bin\Debug\net6.0\Memoria.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\bin\Debug\net6.0\Memoria.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\bin\Debug\net6.0\Dominio.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\bin\Debug\net6.0\Dominio.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.csproj.AssemblyReference.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.AssemblyInfoInputs.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.AssemblyInfo.cs
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.csproj.CoreCompileInputs.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.csproj.CopyComplete
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\refint\Memoria.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\Memoria.genruntimeconfig.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Memoria\obj\Debug\net6.0\ref\Memoria.dll

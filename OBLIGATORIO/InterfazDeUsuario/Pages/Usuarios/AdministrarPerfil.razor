@@ -1,0 +1,65 @@
+﻿@page "/Perfil"
+@using Logica
+@using Dominio
+@inject UsuarioLogica UsuarioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Perfil</PageTitle>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Perfil <i class="bi bi-person"></i> </h1>
+
+        <form disabled>
+            <div class="mb-3">
+                <label for="correo" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="correo" readonly
+                       value="@_usuarioActual.Correo">
+            </div>
+
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" readonly
+                       value="@_usuarioActual.Nombre">
+            </div>
+
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellido" readonly
+                       value="@_usuarioActual.Apellido">
+            </div>
+
+            <div class="mb-3">
+                <label for="direccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="direccion" readonly
+                       value="@_usuarioActual.Direccion">
+            </div>
+        </form>
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="button" class="btn btn-danger" @onclick="CambiarContrasena">
+                Cambiar contraseña <i class="bi bi-shield-lock"></i>
+            </button>
+            <button type="button" class="btn btn-success" @onclick="EditarPerfil">
+                Editar <i class="bi bi-pencil-square"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Usuario _usuarioActual;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+    }
+    
+    private void CambiarContrasena()
+    {
+        NavigationManager.NavigateTo("/CambiarContrasena");
+    }
+    private void EditarPerfil()
+    {
+        NavigationManager.NavigateTo("/EditarPerfil");
+    }
+}

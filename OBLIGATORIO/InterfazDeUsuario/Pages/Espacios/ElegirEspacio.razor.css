@@ -1,0 +1,11 @@
+﻿.espacios{
+    color: #1b6ec2;
+}
+
+#botonCrearEspacio{
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    align-items: center;
+    color: #1b6ec2;
+}

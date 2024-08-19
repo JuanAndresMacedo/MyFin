@@ -1,0 +1,134 @@
+@page "/Cuentas/{id:int}/EditarCuentaMonetaria"
+@using Dominio
+@using Logica
+@inject MonetariaLogica MonetariaLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject MonedaLogica MonedaLogica
+@inject TransaccionLogica TransaccionLogica
+@inject NavigationManager NavigationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar cuenta monetaria <i class="bi bi-cash-stack"></i></h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre">Nombre </label>
+                <input class="form-control" type="text" id="nombre" @bind="_nombre">
+            </div>
+
+            <div class="mb-3">
+                <label for="montoInicial">Monto Inicial</label>
+                <input type="number" class="form-control" id="montoInicial" @bind="_montoInicial"/>
+            </div>
+
+            @if (MonetariaLogica.ValidarSiMonetariaTieneUnaTransacciónAsociada(
+                _cuentaActual, _espacioActual, TransaccionLogica))
+            {
+                <div class="form-group">
+                    <label class="monedas" for="misMonedas">Monedas:</label>
+                    <input type="text" class="form-control" id="misMonedas" readonly
+                           value="@($"{_monedaSeleccionada.Nombre} " + 
+                                    $"({_monedaSeleccionada.SimboloMonetario})")"/>
+                </div>
+                <div id="informacion" class="form-text mb-3">
+                    La cuenta tiene una transaccion asociada,
+                    no se puede editar la moneda.
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="monedas" for="misMonedas">Monedas:</label>
+                    <select @bind="_idMonedaSeleccionada" class="form-select form-select mb-3" id="misMonedas">
+                        @foreach (Moneda moneda in MonedaLogica.ListarMonedas())
+                        {
+                            <option value="@moneda.Id"> @moneda.Nombre (@moneda.SimboloMonetario)</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary" @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+
+    private Monetaria _cuentaActual;
+    private Monetaria _cuentaEditada;
+
+    private string _nombre;
+    private float? _montoInicial;
+    private Moneda _monedaSeleccionada;
+    private int _idMonedaSeleccionada;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+
+        _cuentaActual = (Monetaria)MonetariaLogica.EncontrarMonetaria(Id);
+        
+        _nombre = _cuentaActual.Nombre;
+        _idMonedaSeleccionada = _cuentaActual.Moneda.Id;
+        _montoInicial = _cuentaActual.Monto;
+        
+        _monedaSeleccionada = MonedaLogica.EncontrarMoneda(_idMonedaSeleccionada);
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void GuardarCambios()
+    {
+        try
+        {
+            _cuentaEditada = new Monetaria()
+            {
+                Id = Id,
+                Nombre = _nombre,
+                Propietario = _usuarioActual,
+                Espacio = _espacioActual,
+                FechaDeCreacion = _cuentaActual.FechaDeCreacion,
+                Monto = _montoInicial,
+                Moneda = _monedaSeleccionada,
+            };
+
+            MonetariaLogica.ActualizarMonetaria(_cuentaEditada);
+            NavigationManager.NavigateTo("/Cuentas");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

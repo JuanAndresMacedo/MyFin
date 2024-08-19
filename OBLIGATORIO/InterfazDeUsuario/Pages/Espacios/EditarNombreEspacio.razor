@@ -1,0 +1,74 @@
+﻿@page "/EditarNombreEspacio"
+@using Logica
+@using Dominio
+@inject EspacioLogica EspacioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Renombrar espacio</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Renombrar espacio <i class="bi bi-pencil-square"></i> </h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nuevo nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombreNuevo">
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="VolverInicio"> Cancelar </button>
+                <button type="button" class="btn btn-primary" @onclick="RenombrarEspacio">
+                    Renombrar <i class="bi bi-pencil-square"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code{
+    private Espacio _espacioActual;
+    private string _nombreNuevo;
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+    }
+    
+    private void RenombrarEspacio()
+    {
+        try
+        {
+            Espacio espacioEditado = new Espacio()
+            {
+                Id = _espacioActual.Id,
+                Nombre = _nombreNuevo
+            };
+            EspacioLogica.ActualizarEspacio(espacioEditado);
+            NavigationManager.NavigateTo("/Principal");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+    private void VolverInicio()
+    {
+        NavigationManager.NavigateTo("/Principal");
+    }
+
+}

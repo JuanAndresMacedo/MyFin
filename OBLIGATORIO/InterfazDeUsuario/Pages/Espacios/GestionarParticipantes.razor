@@ -1,0 +1,108 @@
+﻿@page "/GestionarParticipantes"
+@using Logica
+@using Dominio
+@inject EspacioLogica EspacioLogica
+@inject UsuarioLogica UsuarioLogica
+
+<PageTitle>Gestionar participantes</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<a href="/Principal" class="btn btn-primary btn-sm">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Gestionar participantes <i class="bi bi-gear"></i> </h1>
+        <form>
+
+            <div class="mb-3">
+                <label for="nombre" class="form-label"> Ingrese el correo de un nuevo participante </label>
+                <input type="text" class="form-control" id="nombre" required @bind="_correoNuevoParticipante">
+                <br>
+                <button type="button" class="btn btn-primary w-100" id="botonAgregarParticipante"
+                        @onclick="AgregarParticipante">
+                    Agregar <i class="bi bi-person-check"></i>
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label for="participantes" class="form-label">Seleccione el participante que desea eliminar</label>
+                <select @bind="_correoParticipanteSeleccionado" class="form-select form-select-lg mb-3" id="participantes">
+                    <option value="" selected> Seleccionar una opción </option>
+                    @if (_espacioActual.Participantes.Count > 0)
+                    {
+                        foreach (Usuario participante in _espacioActual.Participantes)
+                        {
+                            <option value="@participante.Correo"
+                                    selected="@(_correoParticipanteSeleccionado == 
+                                                participante.Correo)">
+                                @participante.Correo
+                            </option>
+                        }
+                    }
+                </select>
+                <button type="button" class="btn btn-danger w-100" @onclick="EliminarParticipante">
+                    Eliminar <i class="bi bi-person-dash"></i>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@code{
+    private string _correoParticipanteSeleccionado;
+    private string _correoNuevoParticipante;
+    private Espacio _espacioActual;
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+    }
+    
+    private void EliminarParticipante()
+    {
+        try
+        {
+            Usuario participanteAEliminar = UsuarioLogica.ListarUsuarios().
+                Where(usuario => usuario.Correo == _correoParticipanteSeleccionado).FirstOrDefault();
+            EspacioLogica.EliminarParticipante(participanteAEliminar);
+            _correoParticipanteSeleccionado = "";
+        }
+        catch (LogicaExcepcion)
+        {
+            _mensajeDeError = "Seleccione correctamente el participante que desea eliminar.";
+        }
+        catch (DominioExcepcion)
+        {
+            _mensajeDeError = "Seleccione correctamente el participante que desea eliminar.";
+        }
+    }
+
+    private void AgregarParticipante()
+    {
+        try
+        {
+            Usuario nuevoParticipante = UsuarioLogica.ListarUsuarios().
+                Where(usuario => usuario.Correo == _correoNuevoParticipante).FirstOrDefault();
+            EspacioLogica.AgregarNuevoParticipante(nuevoParticipante);
+            _correoNuevoParticipante = "";
+        }
+        catch (LogicaExcepcion)
+        {
+            _mensajeDeError = "Ingrese correctamente el correo del participante que desea agregar.";
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

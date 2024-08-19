@@ -1,0 +1,101 @@
+﻿@page "/ObjetivosDeGasto"
+@using Logica
+@using Dominio
+@inject ObjetivoDeGastoLogica ObjetivoDeGastoLogica
+@inject EspacioLogica EspacioLogica
+
+<PageTitle>Objetivo de gasto</PageTitle>
+
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h1 class="text-center">Objetivos de gasto <i class="bi bi-bag-check"></i></h1>
+        <a href="/ObjetivosDeGasto/CrearObjetivoDeGasto" class="btn btn-primary mb-3 w-100">
+            Crear objetivo de gasto <i class="bi bi-plus-circle"></i>
+        </a>
+
+        <ul class="list-group">
+            @foreach (ObjetivoDeGasto objetivoDeGasto in _objetivosDeGasto)
+            {
+                <li class="list-group-item">
+                    <div>
+                        <div> Objetivo: @objetivoDeGasto.Titulo</div>
+                    </div>
+                    <li class="list-group-item">
+                        <div>Datos del objetivo: </div>
+                        <div> - Monto máximo: @objetivoDeGasto.MontoMaximo</div>
+                        <div>
+                            - Categorias:
+                            @for (int i = 0; i < objetivoDeGasto.Categorias.Count; i++)
+                            {
+                                @objetivoDeGasto.Categorias[i].Nombre
+                                @if (i < objetivoDeGasto.Categorias.Count - 1)
+                                {
+                                    @(" - ")
+                                }
+                            }
+                        </div>
+                        <div>
+                            @if (objetivoDeGasto.Token is null)
+                            {
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-primary btn-sm w-100 ms-auto"
+                                            @onclick="() => CompartirObjetivo(objetivoDeGasto.Id)">
+                                        Compartir objetivo <i class="bi bi-share"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="mb-0">
+                                    - Enlace Compartido:
+                                    <a href="/Objetivo/@objetivoDeGasto.Token" target="_blank">
+                                        /Objetivo/@objetivoDeGasto.Token/ 
+                                    </a>
+                                </p>
+
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-danger btn-sm w-100 ms-auto"
+                                            @onclick="() => DejarDeCompartirObjetivo(objetivoDeGasto.Id)">
+                                        Dejar de compartir <i class="bi bi-file-excel"></i>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+
+                    </li>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private IList<ObjetivoDeGasto> _objetivosDeGasto;
+    private Espacio _espacioActual;
+
+    protected override void OnInitialized()
+    {
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _objetivosDeGasto = ObjetivoDeGastoLogica.
+            ListarObjetivosDeGastosDeUnEspacio(_espacioActual);
+    }
+
+    private void CompartirObjetivo(int objetivoDeGastoId)
+    {
+        ObjetivoDeGastoLogica.CompartirUnObjetivo(objetivoDeGastoId);
+        CargarDatos();
+    }
+    
+    private void DejarDeCompartirObjetivo(int objetivoDeGastoId)
+    {
+        ObjetivoDeGastoLogica.DejarDeCompartirObjetivo(objetivoDeGastoId);
+        CargarDatos();
+    }
+
+}

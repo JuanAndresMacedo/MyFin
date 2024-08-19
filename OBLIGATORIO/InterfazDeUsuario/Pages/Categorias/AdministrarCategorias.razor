@@ -1,0 +1,84 @@
+@page "/Categorias"
+@using Dominio
+@using Logica
+@inject CategoriaLogica CategoriaLogica
+@inject UsuarioLogica UsuarioLogica
+@inject TransaccionLogica TransaccionLogica
+@inject EspacioLogica EspacioLogica
+
+<PageTitle>Categorias</PageTitle>
+
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h1 class="text-center">Categorias <i class="bi bi-tags"></i> </h1>
+        <a href="/Categorias/CrearCategoria" class="btn btn-primary mb-3 w-100">
+            Crear categoria <i class="bi bi-plus-circle"></i>
+        </a>
+
+        <ul class="list-group">
+            @foreach (Categoria categoria in _categorias)
+            {
+                <li class="list-group-item">
+                    <div>
+                        <div> Categoría: @categoria.Nombre</div>
+                        <div> Creada por: @categoria.UsuarioCreador.Nombre</div>
+                    </div>
+                    <li class="list-group-item">
+                        <div>
+                            <div> Datos de la categoría:</div>
+                            <div> - Estatus: @categoria.Estatus</div>
+                            <div> - Tipo: @categoria.Tipo</div>
+                            <div> - Creacion: @categoria.FechaDeCreacion.ToShortDateString()</div>
+                        </div>
+                    </li>
+                    @if (categoria.UsuarioCreador.Equals(UsuarioLogica.UsuarioActual()))
+                    {
+                        <div class="d-flex justify-content-between align-items-center">
+                            @if (CategoriaLogica.ValidarSiCategoriaTieneUnaTransacciónAsociada
+                                (@categoria, _espacioActual, TransaccionLogica))
+                            {
+                                <button class="btn btn-secondary btn-sm ml-2 w-50">
+                                    No se puede eliminar <i class="bi bi-shield-x"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger btn-sm ml-2 w-50" @onclick="() => EliminarCategoria(categoria.Id)">
+                                    Eliminar <i class="bi bi-trash"></i>
+                                </button>
+                            }
+                            <a class="btn btn-success btn-sm w-50" href="categorias/@categoria.Id/editarCategoria">
+                                Editar <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </div>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private IList<Categoria> _categorias;
+    private Espacio _espacioActual;
+
+    protected override void OnInitialized()
+    {
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _categorias = CategoriaLogica.ListarCategoriasDeUnEspacio(_espacioActual);
+    }
+
+    private void EliminarCategoria(int idAEliminar)
+    {
+        CategoriaLogica.EliminarCategoria(idAEliminar);
+
+        CargarDatos();
+    }
+
+}

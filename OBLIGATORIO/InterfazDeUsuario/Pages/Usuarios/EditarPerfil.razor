@@ -1,0 +1,95 @@
+﻿@page "/EditarPerfil"
+@using Dominio
+@using Logica
+@inject UsuarioLogica UsuarioLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Editar perfil</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar perfil <i class="bi bi-pencil-square"></i> </h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellido" required @bind="_apellido">
+            </div>
+
+            <div class="mb-3">
+                <label for="direccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="direccion" @bind="_direccion">
+                <div id="informacion-direccion" class="form-text">Este campo no es obligatorio.</div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="CancelarEditarPerfil">Cancelar</button>
+                <button type="button" class="btn btn-primary" @onclick="ConfirmarEditarPerfil">
+                    Confirmar <i class="bi bi-check2"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private Usuario? _usuarioEditado;
+    private string _nombre;
+    private string _apellido;
+    private string _direccion;
+    private Usuario _usuarioActual;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _nombre = _usuarioActual.Nombre;
+        _apellido = _usuarioActual.Apellido;
+        _direccion = _usuarioActual.Direccion;
+    }
+
+    private void CancelarEditarPerfil()
+    {
+        NavigationManager.NavigateTo("/Perfil");
+    }
+
+    private void ConfirmarEditarPerfil()
+    {
+        try
+        {
+            _usuarioEditado = new Usuario()
+            {
+                Id = _usuarioActual.Id,
+                Nombre = _nombre,
+                Apellido = _apellido,
+                Correo = _usuarioActual.Correo,
+                Contrasena = _usuarioActual.Contrasena,
+                Direccion = _direccion
+            };
+            UsuarioLogica.ActualizarUsuario(_usuarioEditado);
+            NavigationManager.NavigateTo("/Perfil");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+}

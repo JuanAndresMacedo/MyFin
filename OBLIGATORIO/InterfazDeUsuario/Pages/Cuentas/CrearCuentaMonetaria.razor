@@ -1,0 +1,118 @@
+@page "/Cuentas/CrearCuentaMonetaria/"
+@using Dominio
+@using Logica
+@inject MonetariaLogica MonetariaLogica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject MonedaLogica MonedaLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear Cuenta Monetaria</PageTitle>
+
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Crear cuenta monetaria <i class="bi bi-cash-stack"></i> </h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Monto Inicial</label>
+                <input type="number" class="form-control" id="apellido" required @bind="_monto">
+            </div>
+
+            <div class="form-group">
+                <label class="espacios" for="misEspacios">Monedas:</label>
+                <select @bind="_idMonedaSeleccionada" class="form-select form-select mb-3" id="misEspacios">
+                    <option value="0">Seleccionar una opción</option>
+                    @foreach (Moneda moneda in MonedaLogica.ListarMonedas())
+                    {
+                        <option value="@moneda.Id"> @moneda.Nombre (@moneda.SimboloMonetario)  </option>
+                    }
+                </select>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Fecha de Creación:</label>
+                    <input type="date" class="form-control" id="fechaInicio" @bind="_fechaDeCreacion">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="CrearCuentaMonetariaNueva">
+                    Crear <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private Monetaria? _cuentaMonetariaACrear;
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+    
+    private string _nombre;
+    private float _monto;
+    private DateTime _fechaDeCreacion;
+    private Moneda _monedaSeleccionada;
+    private int _idMonedaSeleccionada;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _fechaDeCreacion = DateTime.Today;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Cuentas");
+    }
+
+    private void CrearCuentaMonetariaNueva()
+    {
+        try
+        {
+            _monedaSeleccionada = MonedaLogica.EncontrarMoneda(_idMonedaSeleccionada);
+            
+            _cuentaMonetariaACrear = new Monetaria()
+            {
+                Nombre = _nombre,
+                Monto = _monto,
+                Moneda = _monedaSeleccionada,
+                FechaDeCreacion = _fechaDeCreacion,
+                Propietario = _usuarioActual,
+                Espacio = _espacioActual,
+            };
+            
+            MonetariaLogica.AgregarMonetaria(_cuentaMonetariaACrear);
+            NavigationManager.NavigateTo("/Cuentas");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

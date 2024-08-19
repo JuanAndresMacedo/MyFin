@@ -1,0 +1,85 @@
+﻿@page "/Reportes/PorCategoria"
+@using Logica
+@using Dominio
+
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject EspacioLogica EspacioLogica
+@inject ReporteCategoriaLogica ReporteCategoriaLogica
+
+<PageTitle>Reporte por Categorías</PageTitle>
+
+
+<h1>Reportes <i class="bi bi-bar-chart"></i></h1>
+<a href="/Reportes" class="btn btn-primary btn-sm mb-3">Volver <i class="bi bi-arrow-90deg-left"></i></a>
+
+<div class="container center-div d-flex justify-content-center align-items-start">
+    <div class="col-md-6">
+        <h2>Reporte de categorías por mes <i class="bi bi-tags"></i></h2>
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fechaInicio">Mes:</label>
+                    <input type="month" class="form-control" id="fechaInicio" @bind="_mes">
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary mb-3 w-100" @onclick="MostrarPorCategoria">
+                Mostrar reportes de
+                @_mes.ToString("MMMM") <i class="bi bi-filter"></i>
+            </button>
+        </form>
+
+
+        <ul class="list-group mt-3">
+            @if (_reportePorCategoria == null || _reportePorCategoria.Count == 0)
+            {
+                <li class="list-group-item">No hay datos de @_mesMostrado.ToString("MMMM").</li>
+            }
+            else
+            {
+                <p>Reporte de @_mesMostrado.ToString("MMMM")</p>
+                foreach (ReporteCategoriaLogica.DatosPorCategoria datosPorCategoria in _reportePorCategoria)
+                {
+                    <li class="list-group-item">
+                        <p>
+                            @datosPorCategoria.Categoria.Nombre : $@datosPorCategoria.SumaDeGastos =>
+                            @String.Format("{0:0.0}", datosPorCategoria.Porcentaje)%
+                        </p>
+                        <div class="progress" style="height: 25px">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: @String.Format("{0:0}", datosPorCategoria.Porcentaje)%">
+                                $@datosPorCategoria.SumaDeGastos |
+                                @String.Format("{0:0.0}", datosPorCategoria.Porcentaje)%
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private Espacio _espacioActual;
+    private List<ReporteCategoriaLogica.DatosPorCategoria> _reportePorCategoria;
+    private DateTime _mes;
+    private DateTime _mesMostrado;
+
+    protected override void OnInitialized()
+    {
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _mes = DateTime.Today;
+        _mesMostrado = DateTime.Today;
+        _reportePorCategoria = ReporteCategoriaLogica.ReportePorCategoria(TransaccionLogica,
+            _espacioActual, _mes, TipoDeCambioLogica);
+    }
+
+    private void MostrarPorCategoria()
+    {
+        _reportePorCategoria = ReporteCategoriaLogica.ReportePorCategoria(TransaccionLogica,
+            _espacioActual, _mes, TipoDeCambioLogica);
+        _mesMostrado = _mes;
+    }
+
+}

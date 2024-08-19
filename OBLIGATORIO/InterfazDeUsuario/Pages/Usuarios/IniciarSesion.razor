@@ -1,0 +1,78 @@
+﻿@page "/"
+@using Dominio
+@using Logica
+@inject UsuarioLogica UsuarioLogica
+@layout SinNavLayout
+@inject NavigationManager NavigationManager
+
+<PageTitle>¡Bienvenido a MyFin!</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1 class="nombre-app">MyFin</h1>
+        <form>
+            <div class="mb-3">
+                <label for="correo" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="correo" required @bind="_correo">
+            </div>
+
+            <div class="mb-3">
+                <label for="contrasena" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="contrasena" required @bind="_contrasena">
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="mt-3">¿No tienes una cuenta? <a href="/Registro">Regístrate</a></p>
+                <button type="button" class="btn btn-primary" @onclick="Ingresar">Iniciar Sesión</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private Usuario? _posibleUsuario;
+    private string _contrasena;
+    private string _correo;
+
+    private string _mensajeDeError;
+    private string _mensajeAlerta;
+
+    protected override void OnInitialized()
+    {
+        if (UsuarioLogica.UsuarioActual() != null)
+        {
+            NavigationManager.NavigateTo("/ElegirEspacio");
+        }
+        _posibleUsuario = new Usuario();
+        _mensajeAlerta = "El correo y/o contraseña son incorrectos o vacíos.";
+    }
+
+    private void Ingresar()
+    {
+        try
+        {
+            _posibleUsuario.Correo = _correo;
+            _posibleUsuario.Contrasena = _contrasena;
+            UsuarioLogica.IniciarSesion(_posibleUsuario);
+            NavigationManager.NavigateTo("/ElegirEspacio");
+        }
+        catch (LogicaExcepcion)
+        {
+            _mensajeDeError = _mensajeAlerta;
+        }
+        catch (DominioExcepcion)
+        {
+            _mensajeDeError = _mensajeAlerta;
+        }
+    }
+
+}

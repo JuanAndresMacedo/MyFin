@@ -1,0 +1,18 @@
+.center-div[b-7xa0ncwaye] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.confirmar-cambio-espacio[b-7xa0ncwaye]{
+    color: #1b6ec2;
+    margin-bottom: 2%;
+}
+
+.recuadro[b-7xa0ncwaye] {
+    border: 2px solid #1b6ec2;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    padding: 20px;
+}

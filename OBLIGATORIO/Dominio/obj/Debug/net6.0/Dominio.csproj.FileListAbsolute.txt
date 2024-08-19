@@ -1,0 +1,12 @@
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\bin\Debug\net6.0\Dominio.deps.json
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\bin\Debug\net6.0\Dominio.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\bin\Debug\net6.0\Dominio.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.csproj.AssemblyReference.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.AssemblyInfoInputs.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.AssemblyInfo.cs
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.csproj.CoreCompileInputs.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\refint\Dominio.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\Dominio.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Dominio\obj\Debug\net6.0\ref\Dominio.dll

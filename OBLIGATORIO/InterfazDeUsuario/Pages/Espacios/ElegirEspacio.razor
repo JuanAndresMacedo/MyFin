@@ -1,0 +1,82 @@
+﻿@page "/ElegirEspacio"
+@using Logica
+@using Dominio
+@layout SinNavLayout
+@inject NavigationManager NavigationManager
+@inject EspacioLogica EspacioLogica
+@inject UsuarioLogica UsuarioLogica
+
+<PageTitle>Seleccione un espacio:</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1 class="nombre-app">MyFin</h1>
+        <form>
+            <div class="form-group">
+                <label class="espacios" for="misEspacios">Mis espacios:</label>
+                <select @bind="_idEspacioSeleccionado" class="form-select form-select-lg mb-3" id="misEspacios">
+                    <option value="0">Seleccionar una opción</option>
+                    @foreach (Espacio espacio in EspacioLogica.ListarEspaciosDeUnUsuario(_usuarioActual))
+                    {
+                        <option value="@espacio.Id"> @espacio.Nombre </option>
+                    }
+                </select>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-primary w-100" @onclick="SeleccionarEspacio"> Seleccionar </button>
+            </div>
+            <div>
+                <button type="button" class="btn" id="botonCrearEspacio" @onclick="AgregarEspacio">
+                     O cree uno ahora
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private Usuario _usuarioActual;
+    private Espacio _espacioSeleccionado;
+    private int _idEspacioSeleccionado;
+    
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        
+        if (EspacioLogica.EspacioActual() != null && _usuarioActual != null)
+        {
+            NavigationManager.NavigateTo("/Principal");
+        }
+    }
+    
+    private void SeleccionarEspacio()
+    {
+        if (_idEspacioSeleccionado == 0)
+        {
+            _mensajeDeError = "Seleccione un espacio.";
+        }
+        else
+        {
+            EspacioLogica.AsignarEspacioActual(_idEspacioSeleccionado);
+            NavigationManager.NavigateTo("/Principal");
+        }
+    }
+
+    private void AgregarEspacio()
+    {
+        NavigationManager.NavigateTo("/CrearEspacio");
+    }
+
+}

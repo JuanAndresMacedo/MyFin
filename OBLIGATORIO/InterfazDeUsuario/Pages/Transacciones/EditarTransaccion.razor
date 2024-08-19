@@ -1,0 +1,92 @@
+﻿@page "/Transacciones/{Id}/EditarTransaccion"
+@using Dominio
+@using Logica
+@inject TransaccionLogica TransaccionLogica
+@inject NavigationManager NavigationManager
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Editar transaccion<i class="bi bi-arrow-down-up"></i> </h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="GuardarCambios">
+                    Guardar cambios <i class="bi bi-box-arrow-down"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private int _idTransaccionActual;
+    
+    private Transaccion _transaccionActual;
+    private Transaccion _transaccionEditada;
+    
+    private string _nombre;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _idTransaccionActual = int.Parse(Id);
+        
+        _transaccionActual = new Transaccion()
+        {
+            Id = _idTransaccionActual
+        };
+
+        _transaccionActual = TransaccionLogica.EncontrarTransaccion(_idTransaccionActual);
+
+        _nombre = _transaccionActual.Nombre;
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Transacciones");
+    }
+
+    private void GuardarCambios()
+    {
+        try
+        {
+            _transaccionEditada = new Transaccion()
+            {
+                Nombre = _nombre,
+                Id = _idTransaccionActual,
+            };
+
+            TransaccionLogica.ActualizarTransaccion(_transaccionEditada);
+            NavigationManager.NavigateTo("/Transacciones");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}

@@ -1,0 +1,11 @@
+.espacios[b-utha2o5k0w]{
+    color: #1b6ec2;
+}
+
+#botonCrearEspacio[b-utha2o5k0w]{
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    align-items: center;
+    color: #1b6ec2;
+}

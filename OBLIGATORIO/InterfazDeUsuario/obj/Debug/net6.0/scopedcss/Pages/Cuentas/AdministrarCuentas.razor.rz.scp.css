@@ -1,0 +1,12 @@
+h1[b-smeceydo3z], h2[b-smeceydo3z] {
+    color: #1b6ec2;
+}
+
+.cuentas-titulo[b-smeceydo3z]{
+    margin-bottom: 20px;
+}
+@media (max-width: 768px) {
+    .col-lg-6[b-smeceydo3z] {
+        margin-top: 20px;
+    }
+}

@@ -1,0 +1,17 @@
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Logica.deps.json
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Logica.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Logica.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Dominio.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Memoria.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Memoria.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\bin\Debug\net6.0\Dominio.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.csproj.AssemblyReference.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.AssemblyInfoInputs.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.AssemblyInfo.cs
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.csproj.CoreCompileInputs.cache
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.csproj.CopyComplete
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\refint\Logica.dll
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\Logica.pdb
+C:\Users\juanm\OneDrive\Desktop\286894_290961_286403\OBLIGATORIO\Logica\obj\Debug\net6.0\ref\Logica.dll

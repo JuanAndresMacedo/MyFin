@@ -1,0 +1,65 @@
+﻿@page "/Principal"
+@using Logica
+@using Dominio
+@inject NavigationManager NavigationManager
+@inject EspacioLogica EspacioLogica
+@inject UsuarioLogica UsuarioLogica
+
+<PageTitle>Espacio actual</PageTitle>
+
+    <div class="container center-div d-flex justify-content-center align-items-start">
+        <div class="col-md-6">
+            <h1 class="text-center">@_espacioActual.Nombre </h1>
+            @if (_usuarioActual.Equals(_espacioActual.Administrador))
+            {
+                <button class="w-100 btn btn-primary mb-3" type="button" @onclick="EditarNombre">
+                    Renombrar espacio <i class="bi bi-pencil-square"></i>
+                </button>
+            }
+            <h2 class="mb-1 mt-2 fs-5">Participantes: </h2>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <i class="bi bi-gear"></i>
+                    @_espacioActual.Administrador.Nombre
+                    @_espacioActual.Administrador.Apellido
+                </li>
+                @foreach (Usuario participante in _espacioActual.Participantes)
+                {
+                    <li class="list-group-item">
+                        <i class="bi bi-person"></i>
+                        @participante.Nombre @participante.Apellido
+                    </li>
+                }
+            </ul>
+            @if (_usuarioActual.Equals(_espacioActual.Administrador))
+            {
+                <button class="w-100 btn btn-primary mt-3" type="button" @onclick="GestionarParticipantes">
+                    Gestionar participantes <i class="bi bi-people"></i>
+                </button>
+            }
+        </div>
+    </div>
+
+@code{
+    private Espacio _espacioActual;
+    private Usuario _usuarioActual;
+    
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+    }
+    
+    private void EditarNombre()
+    {
+        NavigationManager.NavigateTo("/EditarNombreEspacio");
+    }
+
+    private void GestionarParticipantes()
+    {
+        NavigationManager.NavigateTo("/GestionarParticipantes");
+    }
+    
+
+}
+

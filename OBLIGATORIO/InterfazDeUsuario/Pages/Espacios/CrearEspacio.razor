@@ -1,0 +1,81 @@
+﻿@page "/CrearEspacio"
+@using Logica
+@using Dominio
+@layout SinNavLayout
+@inject NavigationManager NavigationManager
+@inject EspacioLogica EspacioLogica
+@inject UsuarioLogica UsuarioLogica
+
+<PageTitle>Crea un nuevo espacio</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1 class="nombre-app">MyFin</h1>
+        <form>
+            <div class="mb-3">
+                <label for="nombre" class="form-label"> Nombre </label>
+                <input type="text" class="form-control" id="nombre" required @bind="_nombre">
+            </div>
+
+            <div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancelar"> Cancelar </button>
+                    <button type="button" class="btn btn-primary" @onclick="CrearNuevoEspacio">
+                        Crear <i class="bi bi-plus-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code{
+    private Usuario _usuarioActual;
+    private Espacio? _espacioNuevo;
+    private string _nombre;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+    }
+    
+    private void CrearNuevoEspacio()
+    {
+        try
+        {
+            _espacioNuevo = new Espacio()
+            {
+                Nombre = _nombre,
+                Administrador = _usuarioActual,
+                Participantes = { }
+            };
+            EspacioLogica.AgregarEspacio(_espacioNuevo);
+            NavigationManager.NavigateTo("/ElegirEspacio");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/ElegirEspacio");
+    }
+
+}

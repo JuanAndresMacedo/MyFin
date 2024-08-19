@@ -1,0 +1,153 @@
+﻿@page "/Transacciones"
+@using Logica
+@using Dominio
+@using Dominio.Constantes
+
+@inject TransaccionLogica TransaccionLogica
+@inject TipoDeCambioLogica TipoDeCambioLogica
+@inject EspacioLogica EspacioLogica
+@inject UsuarioLogica UsuarioLogica
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container text-center">
+    <h1>Transacciones <i class="bi bi-arrow-down-up"></i></h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <a href="/Transacciones/CrearTransaccion" class="btn btn-primary mb-3 w-100">
+                Añadir una transacción <i class="bi bi-plus-circle"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+
+        <h2 class="mt-3 text-center"> Costos </h2>
+        <ul class="list-group">
+            @foreach (Transaccion transaccion in _transacciones)
+            {
+                if (transaccion.Tipo == ConstantesCategoria.tipoCosto)
+                {
+                    <li class="list-group-item">
+                        <div>
+                            <div> Transaccion: @transaccion.Nombre</div>
+                            <div> Para: @transaccion.Cuenta.Propietario.Nombre</div>
+                        </div>
+                        <li class="list-group-item">
+                            <div>
+                                <div>Datos de la transaccion:</div>
+                                <div> - Monto: @transaccion.Moneda.SimboloMonetario 
+                                    @transaccion.Monto</div>
+                                <div> - Cuenta: @transaccion.Cuenta.Nombre</div>
+                                <div> - Categoría: @transaccion.Categoria.Nombre</div>
+                                <div> - Fecha: @transaccion.Fecha.ToShortDateString()</div>
+                            </div>
+                        </li>
+                        @if (transaccion.Cuenta.Propietario.Equals(_usuarioActual))
+                        {
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-primary btn-sm ml-2 w-50" @onclick="() => Duplicar(transaccion.Id)">
+                                    Duplicar <i class="bi bi-files"></i>
+                                </button>
+                                <a class="btn btn-success btn-sm w-50" href="/Transacciones/@transaccion.Id/EditarTransaccion">
+                                    Editar <i class="bi bi-pencil-square"></i>
+                                </a>
+                            </div>
+                        }
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+    <div class="col-lg-6 col-md-12">
+        <h2 class="mt-3 text-center"> Ingresos </h2>
+        <ul class="list-group">
+            @foreach (Transaccion transaccion in _transacciones)
+            {
+                if (transaccion.Tipo == ConstantesCategoria.tipoIngreso)
+                {
+                    <li class="list-group-item">
+                        <div>
+                            <div> Transaccion: @transaccion.Nombre</div>
+                            <div> Para: @transaccion.Cuenta.Propietario.Nombre</div>
+                        </div>
+                        <li class="list-group-item">
+                            <div>
+                                <div>Datos de la transaccion:</div>
+                                <div> - Monto: @transaccion.Moneda.SimboloMonetario 
+                                    @transaccion.Monto</div>
+                                <div> - Cuenta: @transaccion.Cuenta.Nombre</div>
+                                <div> - Categoría: @transaccion.Categoria.Nombre</div>
+                                <div> - Fecha: @transaccion.Fecha.ToShortDateString()</div>
+                            </div>
+                        </li>
+                        @if (transaccion.Cuenta.Propietario.Equals(_usuarioActual))
+                        {
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-primary btn-sm ml-2 w-50" @onclick="() => Duplicar(transaccion.Id)">
+                                    Duplicar <i class="bi bi-files"></i>
+                                </button>
+                                <a class="btn btn-success btn-sm w-50" href="/Transacciones/@transaccion.Id/EditarTransaccion">
+                                    Editar <i class="bi bi-pencil-square"></i>
+                                </a>
+                            </div>
+                        }
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+
+    private IList<Transaccion> _transacciones;
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        CargarDatos();
+    }
+
+    private void Duplicar(int id)
+    {
+        try
+        {
+            Transaccion transaccionADuplicar = TransaccionLogica.EncontrarTransaccion(id);
+
+            TransaccionLogica.MovimientoDeDinero(transaccionADuplicar, TipoDeCambioLogica);
+            TransaccionLogica.DuplicarTransaccion(transaccionADuplicar);
+            CargarDatos();
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+    }
+
+    private void CargarDatos()
+    {
+        _transacciones = TransaccionLogica.ListarTransaccionesDeUnEspacio
+            (EspacioLogica.EncontrarEspacio(_espacioActual.Id));
+    }
+
+}

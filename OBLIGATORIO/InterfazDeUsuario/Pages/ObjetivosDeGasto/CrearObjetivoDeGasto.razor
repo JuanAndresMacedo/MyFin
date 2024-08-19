@@ -1,0 +1,155 @@
+@page "/ObjetivosDeGasto/CrearObjetivoDeGasto"
+@using Dominio
+@using Dominio.Constantes
+@using Logica
+@inject UsuarioLogica UsuarioLogica
+@inject EspacioLogica EspacioLogica
+@inject ObjetivoDeGastoLogica ObjetivoDeGastoLogica
+@inject CategoriaLogica CategoriaLogica
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear Objetivo de Gasto</PageTitle>
+
+<div class="mb-3 mensaje-error-contenedor">
+    @if (!string.IsNullOrWhiteSpace(_mensajeDeError))
+    {
+        <div class="alert alert-danger mensaje-error" role="alert">
+            @_mensajeDeError
+        </div>
+    }
+</div>
+
+<div class="container center-div">
+    <div class="col-md-6">
+        <h1>Crear objetivo de gasto <i class="bi bi-bag-check"></i></h1>
+
+        <form>
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Titulo</label>
+                <input type="text" class="form-control" id="titulo" required @bind="_titulo">
+            </div>
+
+            <div class="mb-3">
+                <label for="montoMaximo" class="form-label">Monto Máximo</label>
+                <input type="number" class="form-control" id="montoMaximo" required @bind="_montoMaximo">
+                <div id="informacion-direccion" class="form-text">En pesos uruguayos.</div>
+            </div>
+
+            <div class="mb-3">
+                <fieldset>
+                    <legend for="categorias" class="form-label fs-6">Categorías</legend>
+                    <div>
+                        @if (_categoriasAMostrar.Count == 0)
+                        {
+                            <p type="text" class="form-control btn-danger">
+                                Sin categorías no es posible crear un objetivo de gasto.
+                            </p>
+                        }
+                        else
+                        {
+                            @foreach (Categoria categoria in _categoriasAMostrar)
+                            {
+                                if (categoria.Espacio.Equals(_espacioActual))
+                                {
+                                    <div class="form-check">
+                                        <label class="form-check-label" for="check_@categoria.Nombre">
+                                            @categoria.Nombre
+                                        </label>
+                                        <input class="form-check-input" type="checkbox" id="check_@categoria.Nombre"
+                                               @onchange="() => ActualizarListaCategorias(categoria.Id)"
+                                               value="@categoria.Nombre"/>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </fieldset>
+            </div>
+
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary"
+                        @onclick="CrearObjetivoDeGastoNuevo">
+                    Crear <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private Usuario _usuarioActual;
+    private Espacio _espacioActual;
+    private ObjetivoDeGasto? _objetivoDeGastoACrear;
+    private List<Categoria> _categoriasAMostrar;
+    private List<Categoria> _categoriasSeleccionadas;
+
+    private string _titulo;
+    private float _montoMaximo;
+
+    private string _mensajeDeError;
+
+    protected override void OnInitialized()
+    {
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _usuarioActual = UsuarioLogica.EncontrarUsuario(UsuarioLogica.UsuarioActual().Id);
+        _espacioActual = EspacioLogica.EncontrarEspacio(EspacioLogica.EspacioActual().Id);
+        _categoriasAMostrar = CategoriaLogica.ListarCategoriasActivasDeUnEspacioPorTipo
+            (_espacioActual, ConstantesCategoria.tipoCosto);
+        _categoriasSeleccionadas = new List<Categoria>();
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/objetivosDeGasto");
+    }
+
+    private void ActualizarListaCategorias(int idAActualizar)
+    {
+        Categoria categoriaAAgregar;
+        categoriaAAgregar = CategoriaLogica.EncontrarCategoria(idAActualizar);
+
+        if (_categoriasSeleccionadas.Contains(categoriaAAgregar))
+        {
+            _categoriasSeleccionadas.Remove(categoriaAAgregar);
+        }
+        else
+        {
+            _categoriasSeleccionadas.Add(categoriaAAgregar);
+        }
+    }
+
+    private void CrearObjetivoDeGastoNuevo()
+    {
+        try
+        {
+            ObjetivoDeGasto _objetivoDeGastoACrear = new ObjetivoDeGasto()
+            {
+                Titulo = _titulo,
+                MontoMaximo = _montoMaximo,
+                UsuarioCreador = _usuarioActual,
+                Espacio = _espacioActual,
+                Categorias = _categoriasSeleccionadas
+            };
+
+            ObjetivoDeGastoLogica.AgregarObjetivoDeGasto(_objetivoDeGastoACrear);
+            NavigationManager.NavigateTo("/ObjetivosDeGasto");
+        }
+        catch (LogicaExcepcion le)
+        {
+            _mensajeDeError = le.Message;
+        }
+        catch (DominioExcepcion de)
+        {
+            _mensajeDeError = de.Message;
+        }
+    }
+
+}
